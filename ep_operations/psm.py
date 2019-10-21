@@ -1,6 +1,6 @@
 import requests
 import pprint
-import io
+from io import TextIOWrapper
 
 from ep_operations.auth import login
 from ep_operations.common import get_authorized_headers
@@ -10,8 +10,8 @@ POST_BINDING_API_V1 = "{}/iapi/v1/psm/sn-binding/{}"
 
 
 def binding(uri: str, user: str, password: str, company: str = None, hardware_id: str = None,
-            gateway_serial_number: str = None, input_file: io.TextIOWrapper = None,
-            output_file: io.TextIOWrapper = None, dryrun: bool = False):
+            gateway_serial_number: str = None, input_file: TextIOWrapper = None,
+            output_file: TextIOWrapper = None, dryrun: bool = False):
     token = login(uri, user, password)
     if len(token) == 0:
         return
@@ -77,5 +77,5 @@ def __delete_binding_request(uri: str, token: str, binding_id: int):
     binding_headers = get_authorized_headers(token)
     binding_request = requests.delete(POST_BINDING_API_V1.format(uri, binding_id), headers=binding_headers)
     response = binding_request.json()
-
+    print("Gateway id {}: removed".format(binding_id))
     return response.get('success', False)

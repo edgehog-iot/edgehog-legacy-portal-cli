@@ -72,13 +72,11 @@ optional arguments:
   --dryrun              Remove binding after insert
 ```
 
-**N.B. (1)**
+**N.B.**
 The file provided with the --input option must be a CSV in the format
 ```
 HARDWARE_ID, SERIAL_NUMBER[, COMPANY_ID]
 ```
-
-**N.B. (2)** The file provided with the --output option **must** exist!
 
 ### Deregister
 Utility to deregister a gateway **[TBI]**
