@@ -1,5 +1,6 @@
 import requests
 import pprint
+import io
 
 from ep_operations.auth import login
 from ep_operations.common import get_authorized_headers
@@ -9,8 +10,8 @@ POST_BINDING_API_V1 = "{}/iapi/v1/psm/sn-binding/{}"
 
 
 def binding(uri: str, user: str, password: str, company: str = None, hardware_id: str = None,
-            gateway_serial_number: str = None, input_file = None, output_file = None,
-            dryrun: bool = False):
+            gateway_serial_number: str = None, input_file: io.TextIOWrapper = None,
+            output_file: io.TextIOWrapper = None, dryrun: bool = False):
     token = login(uri, user, password)
     if len(token) == 0:
         return
