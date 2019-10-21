@@ -40,9 +40,14 @@ def binding(uri: str, user: str, password: str, company: str = None, hardware_id
         return
 
     if output_file:
+        success = True
         for response in responses:
             output_file.write(pprint.pformat(response, indent=4))
+            success = success and response.get('success', False)
         output_file.close()
+        print('{} operations elaborated'.format(len(responses)))
+        if not success:
+            print('Some error occurred. For more info see: {}.'.format(output_file.name))
     else:
         for response in responses:
             pprint.pprint(response, indent=4)
@@ -71,6 +76,5 @@ def __delete_binding_request(uri: str, token: str, binding_id: int):
     binding_headers = get_authorized_headers(token)
     binding_request = requests.delete(POST_BINDING_API_V1.format(uri, binding_id), headers=binding_headers)
     response = binding_request.json()
-    print(binding_request.url)
-    # pprint.pprint(response)
+
     return response.get('success', False)
