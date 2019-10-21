@@ -75,7 +75,7 @@ optional arguments:
 Utility to deregister a gateway [TBI]
 
 ```
-python epcli.py deregister --help
+#: python epcli.py deregister --help
 usage: epcli.py deregister [-h] -u USER [-e {test,staging,production}]
                            [--hardwareid [16 CHAR]] [-i [INPUT]] [-o [OUTPUT]]
 
