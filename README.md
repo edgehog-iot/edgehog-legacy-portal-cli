@@ -2,10 +2,10 @@
 
 Command Line Interface for Edgehog device manager portal
 
-##Dependencies:
+## Dependencies:
 ### Python:
 **Python 3.6+**
-###Libraries:
+### Libraries:
 Requests 2.22.0
 
 `pip install requests==2.22.0`
@@ -71,6 +71,9 @@ optional arguments:
                         Output files containing server responses
   --dryrun              Remove binding after insert
 ```
+
+
+
 ### Deregister
 Utility to deregister a gateway [TBI]
 
