@@ -1,5 +1,6 @@
 __all__ = [
     'auth',
     'psm',
-    'companies'
+    'companies',
+    'operating_systems'
 ]
