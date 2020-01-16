@@ -2,7 +2,7 @@ import requests
 import pprint
 
 from datetime import datetime
-from ep_operations.auth import login
+from ep_operations.auth import login, logout
 from ep_operations.common import get_authorized_headers
 
 OS_API_V1 = "{}/iapi/v1/operating-systems"
@@ -28,6 +28,7 @@ def get_oses(uri: str, user: str, password: str):
             "repository_url": os.get("repository_url")
         })
     pprint.pprint(oses, indent=4)
+    logout(uri, token)
 
 
 def create_os(uri: str, user: str, password: str, name: str, description: str, repository_url: str):
@@ -48,6 +49,7 @@ def create_os(uri: str, user: str, password: str, name: str, description: str, r
     result = create_oss_request.json()
 
     pprint.pprint(result, indent=4)
+    logout(uri, token)
 
 
 def get_releases(uri: str, user: str, password: str, os_id: str):
@@ -70,6 +72,7 @@ def get_releases(uri: str, user: str, password: str, os_id: str):
         })
 
     pprint.pprint(releases, indent=4)
+    logout(uri, token)
 
 
 def create_releases(uri: str, user: str, password: str, os_id: str, version: str, changelog: str, delta_size: int,
@@ -93,3 +96,4 @@ def create_releases(uri: str, user: str, password: str, os_id: str, version: str
     result = create_release_request.json()
 
     pprint.pprint(result, indent=4)
+    logout(uri, token)
