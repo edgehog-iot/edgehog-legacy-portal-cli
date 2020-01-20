@@ -123,12 +123,14 @@ Utility to list all operating systems registered on edgehog
 ```
 #: python epcli.py os list --help
 usage: epcli.py os list [-h] -u USER [-e {test,staging,production}]
+                        [--codeid CODEID]
 
 optional arguments:
   -h, --help            show this help message and exit
   -u USER, --user USER  User email
   -e {test,staging,production}, --environment {test,staging,production}
                         Set the base URI (default: staging)
+  --codeid CODEID       Operating System's code associated to release
 ```
  
 ####- Create
@@ -169,14 +171,15 @@ Utility to list all releases of a single OS
 ```
 #: python epcli.py releases list --help
 usage: epcli.py releases list [-h] -u USER [-e {test,staging,production}]
-                              --osid OSID
+                              [--osid OSID] [--codeid CODEID]
 
 optional arguments:
   -h, --help            show this help message and exit
   -u USER, --user USER  User email
   -e {test,staging,production}, --environment {test,staging,production}
                         Set the base URI (default: staging)
-  --osid OSID           Id of Operating System associated to release
+  --osid OSID           Operating System'id associated to release
+  --codeid CODEID       Operating System's code associated to release
 ```
 
 #### - Create
@@ -184,15 +187,17 @@ Utility to add a new release on a single operating system.
 ```
 #: python epcli.py releases create --help
 usage: epcli.py releases create [-h] -u USER [-e {test,staging,production}]
-                                --osid OSID --version VERSION --changelog
-                                CHANGELOG --deltasize DELTASIZE [--date DATE]
+                                [--osid OSID] [--codeid CODEID] --version
+                                VERSION --changelog CHANGELOG --deltasize
+                                DELTASIZE [--date DATE]
 
 optional arguments:
   -h, --help            show this help message and exit
   -u USER, --user USER  User email
   -e {test,staging,production}, --environment {test,staging,production}
                         Set the base URI (default: staging)
-  --osid OSID           Id of Operating System associated to release
+  --osid OSID           Operating System'id associated to release
+  --codeid CODEID       Operating System'code associated to release
   --version VERSION     OS Version
   --changelog CHANGELOG
                         Os release changelog

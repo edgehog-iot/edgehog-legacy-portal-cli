@@ -1,3 +1,5 @@
+import sys
+
 import requests
 import pprint
 
@@ -10,6 +12,10 @@ RELEASES_API_V1 = "{}/iapi/v1/operating-systems/{}/releases"
 
 
 def get_oses(uri: str, user: str, password: str, code_id: str):
+    pprint.pprint(get_oses_request(uri, user, password, code_id), indent=4)
+
+
+def get_oses_request(uri: str, user: str, password: str, code_id: str):
     token = login(uri, user, password)
     params = {}
     if len(token) == 0:
@@ -17,18 +23,13 @@ def get_oses(uri: str, user: str, password: str, code_id: str):
 
     if code_id is not None:
         params = {
-            '$filters': {
-                "filters": [
-                    {"field": "code_id", "operator": "equals", "value": code_id}
-                ],
-                "logic": "and"
-            }
+            '$filter': "{ \"filters\": [ {\"field\": \"code_id\", \"operator\": \"eq\", \"value\": \"" + code_id +
+                       "\"}],\"logic\": \"and\"}"
         }
 
     headers = get_authorized_headers(token)
-    pprint.pprint(params, indent=4)
-    get_oses_request = requests.get(OS_API_V1.format(uri), headers=headers, params=params)
-    oses_dict = get_oses_request.json()
+    get_oses_api_request = requests.get(OS_API_V1.format(uri), headers=headers, params=params)
+    oses_dict = get_oses_api_request.json()
 
     oses = []
 
@@ -40,8 +41,9 @@ def get_oses(uri: str, user: str, password: str, code_id: str):
             "description": os.get("description"),
             "repository_url": os.get("repository_url")
         })
-    pprint.pprint(oses, indent=4)
+
     logout(uri, token)
+    return oses
 
 
 def create_os(uri: str, user: str, password: str, name: str, description: str, repository_url: str):
@@ -71,6 +73,15 @@ def get_releases(uri: str, user: str, password: str, os_id: str, code_id: str):
     if len(token) == 0:
         return
 
+    if code_id is not None:
+        oses = get_oses_request(uri, user, password, code_id)
+        if oses.__len__() != 1:
+            print("{ \"success\": false,"
+                  "\"message\":\"Error in code_id filter: expected 1 OS, {} found\"}".format(oses.__len__()))
+            return
+        else:
+            os_id = oses[0].get('id')
+
     headers = get_authorized_headers(token)
     get_releases_request = requests.get(RELEASES_API_V1.format(uri, os_id), headers=headers, params=params)
     releases_dict = get_releases_request.json()
@@ -97,6 +108,19 @@ def create_releases(uri: str, user: str, password: str, os_id: str, code_id: str
     token = login(uri, user, password)
     if len(token) == 0:
         return
+
+    if code_id is not None:
+        oses = get_oses_request(uri, user, password, code_id)
+        if oses.__len__() != 1:
+            print("{ \"success\": false,"
+                  "\"message\":\"Error in code_id filter: expected 1 OS, {} found\"}".format(oses.__len__()))
+            sys.exit(1)
+        else:
+            os_id = oses[0].get('id')
+    elif os_id is None:
+        print("{ \"success\": false,"
+              "\"message\":\"No OS identifier found\"}")
+        sys.exit(1)
 
     headers = get_authorized_headers(token)
     body = {
