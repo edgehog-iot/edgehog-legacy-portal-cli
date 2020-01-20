@@ -59,6 +59,10 @@ def main():
 
         args = parser.parse_args()
 
+        if args == parser.parse_args([]):
+            parser.print_help()
+            exit(1)
+
         user_password = ''
 
         if args.user:
