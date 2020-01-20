@@ -1,12 +1,12 @@
 import requests
 import pprint
-from ep_operations.auth import login
+from ep_operations.auth import login, logout
 from ep_operations.common import get_authorized_headers
 
 GET_COMPANIES_V1_API = "{}/iapi/v1/companies"
 
 
-def get_companies(uri: str, user:str, password:str):
+def get_companies(uri: str, user: str, password: str):
     token = login(uri, user, password)
     if len(token) == 0:
         return
@@ -24,3 +24,4 @@ def get_companies(uri: str, user:str, password:str):
         })
 
     pprint.pprint(companies, indent=4)
+    logout(uri, token)

@@ -1,7 +1,7 @@
 import requests
 import pprint
 
-from ep_operations.common import HEADERS
+from ep_operations.common import HEADERS, get_authorized_headers
 
 LOGIN_API_V1 = "{}/iapi/v1/auth/login"
 LOGOUT_API_V1 = "{}/iapi/v1/auth/logout"
@@ -39,6 +39,8 @@ def logout(uri: str, token: str):
     :param token: token of the user to logout
     """
 
-    login_request = requests.post(LOGOUT_API_V1.format(uri), headers=HEADERS)
+    headers = get_authorized_headers(token)
+
+    login_request = requests.post(LOGOUT_API_V1.format(uri), headers=headers)
     response_dict = login_request.json()
     return response_dict.get('success', False)

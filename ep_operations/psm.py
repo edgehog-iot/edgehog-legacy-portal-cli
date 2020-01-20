@@ -2,7 +2,7 @@ import requests
 import pprint
 from io import TextIOWrapper
 
-from ep_operations.auth import login
+from ep_operations.auth import login, logout
 from ep_operations.common import get_authorized_headers
 
 BINDING_API_V1 = "{}/iapi/v1/psm/sn-binding"
@@ -52,6 +52,8 @@ def binding(uri: str, user: str, password: str, company: str = None, hardware_id
     else:
         for response in responses:
             pprint.pprint(response, indent=4)
+
+    logout(uri, token)
 
 
 def __binding_request(uri: str, token: str, company: str = None, hardware_id: str = None,
