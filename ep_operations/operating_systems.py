@@ -9,13 +9,25 @@ OS_API_V1 = "{}/iapi/v1/operating-systems"
 RELEASES_API_V1 = "{}/iapi/v1/operating-systems/{}/releases"
 
 
-def get_oses(uri: str, user: str, password: str):
+def get_oses(uri: str, user: str, password: str, code_id: str):
     token = login(uri, user, password)
+    params = {}
     if len(token) == 0:
         return
 
+    if code_id is not None:
+        params = {
+            '$filters': {
+                "filters": [
+                    {"field": "code_id", "operator": "equals", "value": code_id}
+                ],
+                "logic": "and"
+            }
+        }
+
     headers = get_authorized_headers(token)
-    get_oses_request = requests.get(OS_API_V1.format(uri), headers=headers)
+    pprint.pprint(params, indent=4)
+    get_oses_request = requests.get(OS_API_V1.format(uri), headers=headers, params=params)
     oses_dict = get_oses_request.json()
 
     oses = []
@@ -23,6 +35,7 @@ def get_oses(uri: str, user: str, password: str):
     for os in oses_dict.get("rows", []):
         oses.append({
             "id": os.get("id"),
+            "code_id": os.get("code_id"),
             "name": os.get("name"),
             "description": os.get("description"),
             "repository_url": os.get("repository_url")
@@ -52,13 +65,14 @@ def create_os(uri: str, user: str, password: str, name: str, description: str, r
     logout(uri, token)
 
 
-def get_releases(uri: str, user: str, password: str, os_id: str):
+def get_releases(uri: str, user: str, password: str, os_id: str, code_id: str):
     token = login(uri, user, password)
+    params = {}
     if len(token) == 0:
         return
 
     headers = get_authorized_headers(token)
-    get_releases_request = requests.get(RELEASES_API_V1.format(uri, os_id), headers=headers)
+    get_releases_request = requests.get(RELEASES_API_V1.format(uri, os_id), headers=headers, params=params)
     releases_dict = get_releases_request.json()
 
     releases = []
@@ -75,8 +89,8 @@ def get_releases(uri: str, user: str, password: str, os_id: str):
     logout(uri, token)
 
 
-def create_releases(uri: str, user: str, password: str, os_id: str, version: str, changelog: str, delta_size: int,
-                    release_date: str):
+def create_releases(uri: str, user: str, password: str, os_id: str, code_id: str, version: str, changelog: str,
+                    delta_size: int, release_date: str):
     if not release_date:
         release_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 

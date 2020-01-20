@@ -69,6 +69,8 @@ def main():
         os_list_parser.add_argument('-u', '--user', required=True, type=str, help='User email')
         os_list_parser.add_argument('-e', '--environment', choices=['test', 'staging', 'production'],
                                     help='Set the base URI (default: staging)')
+        os_list_parser.add_argument('--codeid', type=str, help='Operating System\'s code associated to release')
+
         # os create parser
         os_create_parser = os_subparsers.add_parser('create', help='Create new Operating System')
         os_create_parser.add_argument('-u', '--user', required=True, type=str, help='User email')
@@ -88,16 +90,16 @@ def main():
         releases_list_parser.add_argument('-u', '--user', required=True, type=str, help='User email')
         releases_list_parser.add_argument('-e', '--environment', choices=['test', 'staging', 'production'],
                                           help='Set the base URI (default: staging)')
-        releases_list_parser.add_argument('--osid', required=True, type=str,
-                                          help='Id of Operating System associated to release')
+        releases_list_parser.add_argument('--osid', type=str, help='Operating System\'id associated to release')
+        releases_list_parser.add_argument('--codeid', type=str, help='Operating System\'s code associated to release')
 
         # release create parser
         releases_create_parser = releases_subparsers.add_parser('create', help='List releases')
         releases_create_parser.add_argument('-u', '--user', required=True, type=str, help='User email')
         releases_create_parser.add_argument('-e', '--environment', choices=['test', 'staging', 'production'],
                                             help='Set the base URI (default: staging)')
-        releases_create_parser.add_argument('--osid', required=True, type=str,
-                                            help='Id of Operating System associated to release')
+        releases_create_parser.add_argument('--osid', type=str, help='Operating System\'id associated to release')
+        releases_create_parser.add_argument('--codeid', type=str, help='Operating System\'code associated to release')
         releases_create_parser.add_argument('--version', required=True, type=str, help='OS Version')
         releases_create_parser.add_argument('--changelog', required=True, type=str, help='Os release changelog')
         releases_create_parser.add_argument('--deltasize', required=True, type=int, help='Delta size in MB')
@@ -135,17 +137,19 @@ def main():
             companies.get_companies(used_base_url, args.user, user_password)
         elif args.operation == 'os':
             if args.action == 'list':
-                operating_systems.get_oses(used_base_url, args.user, user_password)
+                operating_systems.get_oses(used_base_url, args.user, user_password, code_id=args.codeid)
             elif args.action == 'create':
                 operating_systems.create_os(used_base_url, args.user, user_password, name=args.name,
                                             description=args.description, repository_url=args.url)
         elif args.operation == 'releases':
             if args.action == 'list':
-                operating_systems.get_releases(used_base_url, args.user, user_password, os_id=args.osid)
+                operating_systems.get_releases(used_base_url, args.user, user_password, os_id=args.osid,
+                                               code_id=args.codeid)
             elif args.action == 'create':
                 operating_systems.create_releases(used_base_url, args.user, user_password, os_id=args.osid,
                                                   version=args.version, changelog=args.changelog,
-                                                  delta_size=args.deltasize, release_date=args.date)
+                                                  delta_size=args.deltasize, release_date=args.date,
+                                                  code_id=args.codeid)
 
     except KeyboardInterrupt:
         print('Interrupted')
