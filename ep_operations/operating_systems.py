@@ -64,11 +64,11 @@ def get_releases(uri: str, user: str, password: str, os_id: str):
     releases = []
     for release in releases_dict.get("rows"):
         releases.append({
-            "id": release.get["id"],
-            "version": release.get["release"],
-            "changelog": release.get["changelog"],
-            "delta_size": release.get["delta_size"],
-            "release_date": release.get["release_date"]
+            "id": release.get("id"),
+            "version": release.get("release"),
+            "changelog": release.get("changelog"),
+            "delta_size": release.get("delta_size"),
+            "release_date": release.get("release_date")
         })
 
     pprint.pprint(releases, indent=4)
@@ -78,7 +78,7 @@ def get_releases(uri: str, user: str, password: str, os_id: str):
 def create_releases(uri: str, user: str, password: str, os_id: str, version: str, changelog: str, delta_size: int,
                     release_date: str):
     if not release_date:
-        release_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        release_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
     token = login(uri, user, password)
     if len(token) == 0:
