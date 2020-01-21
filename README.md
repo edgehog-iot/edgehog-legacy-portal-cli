@@ -9,7 +9,6 @@ Command Line Interface for Edgehog device manager portal
 ## Dependencies:
 Requests 2.22.0
 
-`pip install requests==2.22.0`
 ### Install dependencies
 `pip install -r requirements.txt`
 
@@ -42,13 +41,17 @@ Utility to list all available companies
 
 ```
 #: python epcli companies --help
-usage: epcli companies [-h] -u USER [-e {test,staging,production}]
+usage: epcli companies [-h] -u USER [-p PWD] [-e {test,staging,production}]
+                       [-f]
 
 optional arguments:
   -h, --help            show this help message and exit
   -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
   -e {test,staging,production}, --environment {test,staging,production}
                         Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
 ```
 ---
 ### Binding
@@ -57,16 +60,19 @@ edgehog device manager portal.
 
 ```
 #: python epcli binding --help
-usage: epcli binding [-h] -u USER [-e {test,staging,production}]
-                        [--company [COMPANY]] [--hardwareid [16 CHAR]]
-                        [--serialnumber [K... CODE]] [-i [INPUT]]
-                        [-o [OUTPUT]] [--dryrun]
+usage: epcli binding [-h] -u USER [-p PWD] [-e {test,staging,production}] [-f]
+                     [--company [COMPANY]] [--hardwareid [16 CHAR]]
+                     [--serialnumber [K... CODE]] [-i [INPUT]] [-o [OUTPUT]]
+                     [--dryrun]
 
 optional arguments:
   -h, --help            show this help message and exit
   -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
   -e {test,staging,production}, --environment {test,staging,production}
                         Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
   --company [COMPANY]   Company code
   --hardwareid [16 CHAR]
                         Gateway CPU id
@@ -91,14 +97,18 @@ Utility to deregister a gateway **[TBI]**
 
 ```
 #: python epcli deregister --help
-usage: epcli deregister [-h] -u USER [-e {test,staging,production}]
-                           [--hardwareid [16 CHAR]] [-i [INPUT]] [-o [OUTPUT]]
+usage: epcli deregister [-h] -u USER [-p PWD] [-e {test,staging,production}]
+                        [-f] [--hardwareid [16 CHAR]] [-i [INPUT]]
+                        [-o [OUTPUT]]
 
 optional arguments:
   -h, --help            show this help message and exit
   -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
   -e {test,staging,production}, --environment {test,staging,production}
                         Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
   --hardwareid [16 CHAR]
                         Gateway CPU id
   -i [INPUT], --input [INPUT]
@@ -126,14 +136,17 @@ optional arguments:
 Utility to list all operating systems registered on edgehog
 ```
 #: python epcli os list --help
-usage: epcli os list [-h] -u USER [-e {test,staging,production}]
-                        [--codeid CODEID]
+usage: epcli os list [-h] -u USER [-p PWD] [-e {test,staging,production}] [-f]
+                     [--codeid CODEID]
 
 optional arguments:
   -h, --help            show this help message and exit
   -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
   -e {test,staging,production}, --environment {test,staging,production}
                         Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
   --codeid CODEID       Operating System's code associated to release
 ```
  
@@ -141,14 +154,17 @@ optional arguments:
 Utility for Operating System creation
 ```
 #: python epcli os create --help
-usage: epcli os create [-h] -u USER [-e {test,staging,production}] --name
-                          NAME --description DESCRIPTION --url URL
+usage: epcli os create [-h] -u USER [-p PWD] [-e {test,staging,production}]
+                       [-f] --name NAME --description DESCRIPTION --url URL
 
 optional arguments:
   -h, --help            show this help message and exit
   -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
   -e {test,staging,production}, --environment {test,staging,production}
                         Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
   --name NAME           Operating System name
   --description DESCRIPTION
                         Operating System description
@@ -174,14 +190,18 @@ optional arguments:
 Utility to list all releases of a single OS
 ```
 #: python epcli releases list --help
-usage: epcli releases list [-h] -u USER [-e {test,staging,production}]
-                              [--osid OSID] [--codeid CODEID]
+usage: epcli releases list [-h] -u USER [-p PWD]
+                           [-e {test,staging,production}] [-f] [--osid OSID]
+                           [--codeid CODEID]
 
 optional arguments:
   -h, --help            show this help message and exit
   -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
   -e {test,staging,production}, --environment {test,staging,production}
                         Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
   --osid OSID           Operating System'id associated to release
   --codeid CODEID       Operating System's code associated to release
 ```
@@ -190,16 +210,19 @@ optional arguments:
 Utility to add a new release on a single operating system.
 ```
 #: python epcli releases create --help
-usage: epcli releases create [-h] -u USER [-e {test,staging,production}]
-                                [--osid OSID] [--codeid CODEID] --version
-                                VERSION --changelog CHANGELOG --deltasize
-                                DELTASIZE [--date DATE]
+usage: epcli releases create [-h] -u USER [-p PWD]
+                             [-e {test,staging,production}] [-f] [--osid OSID]
+                             [--codeid CODEID] --version VERSION --changelog
+                             CHANGELOG --deltasize DELTASIZE [--date DATE]
 
 optional arguments:
   -h, --help            show this help message and exit
   -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
   -e {test,staging,production}, --environment {test,staging,production}
                         Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
   --osid OSID           Operating System'id associated to release
   --codeid CODEID       Operating System'code associated to release
   --version VERSION     OS Version
