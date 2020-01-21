@@ -2,20 +2,24 @@
 
 Command Line Interface for Edgehog device manager portal
 
-## Dependencies:
+## Requirements:
 ### Python:
 **Python 3.6+**
-### Libraries:
+
+## Dependencies:
 Requests 2.22.0
 
 `pip install requests==2.22.0`
+### Install dependencies
+`pip install -r requirements.txt`
+
 
 ## Usage
 ### General use
 No use, just for help and version
 ```
-#: python epcli.py --help
-usage: epcli.py [-h] [-v] {binding,deregister,companies,os,releases} ...
+#: python epcli --help
+usage: epcli [-h] [-v] {binding,deregister,companies,os,releases} ...
 
 Edgehog Portal Command Line Interface
 
@@ -37,8 +41,8 @@ optional arguments:
 Utility to list all available companies
 
 ```
-#: python epcli.py companies --help
-usage: epcli.py companies [-h] -u USER [-e {test,staging,production}]
+#: python epcli companies --help
+usage: epcli companies [-h] -u USER [-e {test,staging,production}]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -52,8 +56,8 @@ Utility to register the <hardwareId, serialNumber, company> tuple on the
 edgehog device manager portal.
 
 ```
-#: python epcli.py binding --help
-usage: epcli.py binding [-h] -u USER [-e {test,staging,production}]
+#: python epcli binding --help
+usage: epcli binding [-h] -u USER [-e {test,staging,production}]
                         [--company [COMPANY]] [--hardwareid [16 CHAR]]
                         [--serialnumber [K... CODE]] [-i [INPUT]]
                         [-o [OUTPUT]] [--dryrun]
@@ -86,8 +90,8 @@ HARDWARE_ID, SERIAL_NUMBER[, COMPANY_ID]
 Utility to deregister a gateway **[TBI]**
 
 ```
-#: python epcli.py deregister --help
-usage: epcli.py deregister [-h] -u USER [-e {test,staging,production}]
+#: python epcli deregister --help
+usage: epcli deregister [-h] -u USER [-e {test,staging,production}]
                            [--hardwareid [16 CHAR]] [-i [INPUT]] [-o [OUTPUT]]
 
 optional arguments:
@@ -107,8 +111,8 @@ optional arguments:
 ###OS
 Interface for the Operating Systems API
 ```
-#: python epcli.py os --help
-usage: epcli.py os [-h] {list,create} ...
+#: python epcli os --help
+usage: epcli os [-h] {list,create} ...
 
 positional arguments:
   {list,create}  OS operation help
@@ -121,8 +125,8 @@ optional arguments:
 ####- List
 Utility to list all operating systems registered on edgehog
 ```
-#: python epcli.py os list --help
-usage: epcli.py os list [-h] -u USER [-e {test,staging,production}]
+#: python epcli os list --help
+usage: epcli os list [-h] -u USER [-e {test,staging,production}]
                         [--codeid CODEID]
 
 optional arguments:
@@ -136,8 +140,8 @@ optional arguments:
 ####- Create
 Utility for Operating System creation
 ```
-#: python epcli.py os create --help
-usage: epcli.py os create [-h] -u USER [-e {test,staging,production}] --name
+#: python epcli os create --help
+usage: epcli os create [-h] -u USER [-e {test,staging,production}] --name
                           NAME --description DESCRIPTION --url URL
 
 optional arguments:
@@ -154,8 +158,8 @@ optional arguments:
 ### Releases
 Interface for the Releases API
 ```
-#: python epcli.py releases --help
-usage: epcli.py releases [-h] {list,create} ...
+#: python epcli releases --help
+usage: epcli releases [-h] {list,create} ...
 
 positional arguments:
   {list,create}  Releases operation help
@@ -169,8 +173,8 @@ optional arguments:
 #### - List
 Utility to list all releases of a single OS
 ```
-#: python epcli.py releases list --help
-usage: epcli.py releases list [-h] -u USER [-e {test,staging,production}]
+#: python epcli releases list --help
+usage: epcli releases list [-h] -u USER [-e {test,staging,production}]
                               [--osid OSID] [--codeid CODEID]
 
 optional arguments:
@@ -185,8 +189,8 @@ optional arguments:
 #### - Create
 Utility to add a new release on a single operating system.
 ```
-#: python epcli.py releases create --help
-usage: epcli.py releases create [-h] -u USER [-e {test,staging,production}]
+#: python epcli releases create --help
+usage: epcli releases create [-h] -u USER [-e {test,staging,production}]
                                 [--osid OSID] [--codeid CODEID] --version
                                 VERSION --changelog CHANGELOG --deltasize
                                 DELTASIZE [--date DATE]
