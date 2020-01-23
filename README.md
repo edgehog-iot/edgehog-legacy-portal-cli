@@ -37,12 +37,27 @@ optional arguments:
 ```
 ---
 ### Companies
-Utility to list all available companies
-
+Interface for the Companies API
 ```
 #: python epcli companies --help
-usage: epcli companies [-h] -u USER [-p PWD] [-e {test,staging,production}]
-                       [-f]
+usage: epcli companies [-h] {list,getos,addos} ...
+
+positional arguments:
+  {list,getos,addos}  Operations on Companies API
+    list              List companies
+    getos             List companies
+    addos             List companies
+
+optional arguments:
+  -h, --help          show this help message and exit
+```
+
+####- List
+Utility to list all available companies
+```
+#: python epcli companies list --help
+usage: epcli companies list [-h] -u USER [-p PWD]
+                            [-e {test,staging,production}] [-f]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -52,6 +67,45 @@ optional arguments:
                         Set the base URI (default: staging)
   -f, --force           Detached mode, does not show any warning if production
                         environment is selected
+```
+####- Get OS
+Utility to list all operating systems bound to a company
+```
+python epcli companies getos --help
+usage: epcli companies getos [-h] -u USER [-p PWD]
+                             [-e {test,staging,production}] [-f] --companycode
+                             COMPANYCODE
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
+  -e {test,staging,production}, --environment {test,staging,production}
+                        Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
+  --companycode COMPANYCODE
+                        Company code
+```
+####- Add OS
+Utility to bind an operating system to a company
+```
+python epcli companies addos --help
+usage: epcli companies addos [-h] -u USER [-p PWD]
+                             [-e {test,staging,production}] [-f] --companycode
+                             COMPANYCODE --oscode OSCODE
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
+  -e {test,staging,production}, --environment {test,staging,production}
+                        Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
+  --companycode COMPANYCODE
+                        Company code
+  --oscode OSCODE       Operating System code
 ```
 ---
 ### Binding

@@ -53,7 +53,20 @@ def main():
 
         # companies parser
         companies_parser = subparsers.add_parser('companies', help='List all available companies')
-        add_common_params(companies_parser)
+        companies_subparsers = companies_parser.add_subparsers(help='Operations on Companies API', dest='action')
+        companies_subparsers.required = True
+        # company list
+        companies_list_parser = companies_subparsers.add_parser('list', help='List companies')
+        add_common_params(companies_list_parser)
+        # company get os
+        companies_get_os_parser = companies_subparsers.add_parser('getos', help='List companies')
+        add_common_params(companies_get_os_parser)
+        companies_get_os_parser.add_argument('--companycode', required=True, type=str, help='Company code')
+        # company add os
+        companies_add_os_parser = companies_subparsers.add_parser('addos', help='List companies')
+        add_common_params(companies_add_os_parser)
+        companies_add_os_parser.add_argument('--companycode', required=True, type=str, help='Company code')
+        companies_add_os_parser.add_argument('--oscode', required=True, type=str, help='Operating System code')
 
         # os parser
         os_parser = subparsers.add_parser('os', help='Operation on Operating system API')
@@ -126,7 +139,13 @@ def main():
         elif args.operation == 'deregister':
             deregister(used_base_url, args.user, user_password, hardware_id=args.hardwareid)
         elif args.operation == 'companies':
-            companies.get_companies(used_base_url, args.user, user_password)
+            if args.action == 'list':
+                companies.get_companies(used_base_url, args.user, user_password)
+            elif args.action == 'getos':
+                companies.get_os(used_base_url, args.user, user_password, company_code=args.companycode)
+            elif args.action == 'addos':
+                companies.add_os(used_base_url, args.user, user_password, company_code=args.companycode,
+                                 os_code_id=args.oscode)
         elif args.operation == 'os':
             if args.action == 'list':
                 operating_systems.get_oses(used_base_url, args.user, user_password, code_id=args.codeid)
