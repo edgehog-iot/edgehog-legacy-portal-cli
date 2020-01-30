@@ -209,7 +209,8 @@ Utility for Operating System creation
 ```
 #: python epcli os create --help
 usage: epcli os create [-h] -u USER [-p PWD] [-e {test,staging,production}]
-                       [-f] --name NAME --description DESCRIPTION --url URL
+                       [-f] --codeid CODEID --name NAME --description
+                       DESCRIPTION --url URL
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -219,6 +220,7 @@ optional arguments:
                         Set the base URI (default: staging)
   -f, --force           Detached mode, does not show any warning if production
                         environment is selected
+  --codeid CODEID       Operating System code
   --name NAME           Operating System name
   --description DESCRIPTION
                         Operating System description

@@ -81,6 +81,7 @@ def main():
         # os create parser
         os_create_parser = os_subparsers.add_parser('create', help='Create new Operating System')
         add_common_params(os_create_parser)
+        os_create_parser.add_argument('--codeid', required=True, type=str, help='Operating System code')
         os_create_parser.add_argument('--name', required=True, type=str, help='Operating System name')
         os_create_parser.add_argument('--description', required=True, type=str, help='Operating System description')
         os_create_parser.add_argument('--url', required=True, type=str, help='Operating System URL')
@@ -151,7 +152,7 @@ def main():
                 operating_systems.get_oses(used_base_url, args.user, user_password, code_id=args.codeid)
             elif args.action == 'create':
                 operating_systems.create_os(used_base_url, args.user, user_password, name=args.name,
-                                            description=args.description, repository_url=args.url)
+                                            description=args.description, repository_url=args.url, code_id=args.codeid)
         elif args.operation == 'releases':
             if args.action == 'list':
                 operating_systems.get_releases(used_base_url, args.user, user_password, os_id=args.osid,

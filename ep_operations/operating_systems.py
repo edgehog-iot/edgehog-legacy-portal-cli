@@ -47,7 +47,7 @@ def get_oses_request(uri: str, user: str, password: str, code_id: str):
     return oses
 
 
-def create_os(uri: str, user: str, password: str, name: str, description: str, repository_url: str):
+def create_os(uri: str, user: str, password: str, name: str, description: str, repository_url: str, code_id: str):
     token = login(uri, user, password)
     if len(token) == 0:
         return
@@ -56,6 +56,7 @@ def create_os(uri: str, user: str, password: str, name: str, description: str, r
 
     body = {
         "name": name,
+        "code_id": code_id,
         "description": description,
         "repository_url": repository_url,
         "releases": []
