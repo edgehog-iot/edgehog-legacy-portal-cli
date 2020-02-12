@@ -92,7 +92,7 @@ def get_releases(uri: str, user: str, password: str, os_id: str, code_id: str):
     for release in releases_dict.get("rows"):
         releases.append({
             "id": release.get("id"),
-            "version": release.get("release"),
+            "version": release.get("version"),
             "changelog": release.get("changelog"),
             "delta_size": release.get("delta_size"),
             "release_date": release.get("release_date")

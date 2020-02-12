@@ -52,7 +52,7 @@ optional arguments:
   -h, --help          show this help message and exit
 ```
 
-####- List
+#### - List
 Utility to list all available companies
 ```
 #: python epcli companies list --help
@@ -68,7 +68,7 @@ optional arguments:
   -f, --force           Detached mode, does not show any warning if production
                         environment is selected
 ```
-####- Get OS
+#### - Get OS
 Utility to list all operating systems bound to a company
 ```
 python epcli companies getos --help
@@ -87,7 +87,7 @@ optional arguments:
   --companycode COMPANYCODE
                         Company code
 ```
-####- Add OS
+#### - Add OS
 Utility to bind an operating system to a company
 ```
 python epcli companies addos --help
@@ -186,7 +186,7 @@ positional arguments:
 optional arguments:
   -h, --help     show this help message and exit
 ```
-####- List
+#### - List
 Utility to list all operating systems registered on edgehog
 ```
 #: python epcli os list --help
@@ -204,7 +204,7 @@ optional arguments:
   --codeid CODEID       Operating System's code associated to release
 ```
  
-####- Create
+#### - Create
 Utility for Operating System creation
 ```
 #: python epcli os create --help
