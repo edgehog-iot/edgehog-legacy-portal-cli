@@ -51,16 +51,16 @@ def add_os(uri: str, user: str, password: str, company_code: str, os_code_id: st
 
     companies = get_companies_request(uri, user, password, company_code=company_code)
     if companies.__len__() != 1:
-        print("{ \"success\": false,"
-              "\"message\":\"Error in company_code filter: expected 1 Company, {} found\"}".format(companies.__len__()))
+        print("{{ \"success\": false,"
+              "\"message\":\"Error in company_code filter: expected 1 Company, {} found\"}}".format(companies.__len__()))
         return
     else:
         company_id = companies[0].get('id')
 
     oses = get_oses_request(uri, user, password, os_code_id)
     if oses.__len__() != 1:
-        print("{ \"success\": false,"
-              "\"message\":\"Error in os_code filter: expected 1 OS, {} found\"}".format(oses.__len__()))
+        print("{{ \"success\": false,"
+              "\"message\":\"Error in os_code filter: expected 1 OS, {} found\"}}".format(oses.__len__()))
         return
     else:
         os_id = oses[0].get('id')

@@ -78,8 +78,8 @@ def get_releases(uri: str, user: str, password: str, os_id: str, code_id: str):
     if code_id is not None:
         oses = get_oses_request(uri, user, password, code_id)
         if oses.__len__() != 1:
-            print("{ \"success\": false,"
-                  "\"message\":\"Error in code_id filter: expected 1 OS, {} found\"}".format(oses.__len__()))
+            print("{{ \"success\": false,"
+                  "\"message\":\"Error in code_id filter: expected 1 OS, {} found\"}}".format(oses.__len__()))
             return
         else:
             os_id = oses[0].get('id')
@@ -114,8 +114,8 @@ def create_releases(uri: str, user: str, password: str, os_id: str, code_id: str
     if code_id is not None:
         oses = get_oses_request(uri, user, password, code_id)
         if oses.__len__() != 1:
-            print("{ \"success\": false,"
-                  "\"message\":\"Error in code_id filter: expected 1 OS, {} found\"}".format(oses.__len__()))
+            print("{{ 'success': false,"
+                  "'message':'Error in code_id filter: expected 1 OS, {} found'}}".format(oses.__len__()))
             sys.exit(1)
         else:
             os_id = oses[0].get('id')
