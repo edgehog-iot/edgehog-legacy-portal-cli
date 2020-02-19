@@ -103,7 +103,7 @@ def get_releases(uri: str, user: str, password: str, os_id: str, code_id: str):
 
 
 def create_releases(uri: str, user: str, password: str, os_id: str, code_id: str, version: str, changelog: str,
-                    delta_size: int, release_date: str):
+                    delta_size: int, release_date: str, dryrun: bool = False):
     if not release_date:
         release_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
@@ -134,6 +134,13 @@ def create_releases(uri: str, user: str, password: str, os_id: str, code_id: str
 
     create_release_request = requests.post(RELEASES_API_V1.format(uri, os_id), headers=headers, params=body)
     result = create_release_request.json()
+
+    if dryrun and result.get('success', False):
+        release_id = result.get('data', {id: None}).get('id')
+        if release_id:
+            delete_release_request = requests.delete((RELEASES_API_V1+"/{}").format(uri, os_id, release_id), headers=headers)
+            delete_result = delete_release_request.json()
+            result['dryrun_success'] = delete_result.get('success', False)
 
     pprint.pprint(result, indent=4)
     logout(uri, token)

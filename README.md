@@ -270,6 +270,7 @@ usage: epcli releases create [-h] -u USER [-p PWD]
                              [-e {test,staging,production}] [-f] [--osid OSID]
                              [--codeid CODEID] --version VERSION --changelog
                              CHANGELOG --deltasize DELTASIZE [--date DATE]
+                             [--dryrun]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -287,5 +288,6 @@ optional arguments:
   --deltasize DELTASIZE
                         Delta size in MB
   --date DATE           Release date (default: now)
+  --dryrun              Remove the release after insert
 ```
 ---

@@ -106,6 +106,7 @@ def main():
         releases_create_parser.add_argument('--changelog', required=True, type=str, help='Os release changelog')
         releases_create_parser.add_argument('--deltasize', required=True, type=int, help='Delta size in MB')
         releases_create_parser.add_argument('--date', type=str, help='Release date (default: now)')
+        releases_create_parser.add_argument('--dryrun', help='Remove the release after insert', action='store_true')
 
         args = parser.parse_args()
 
@@ -161,7 +162,7 @@ def main():
                 operating_systems.create_releases(used_base_url, args.user, user_password, os_id=args.osid,
                                                   version=args.version, changelog=args.changelog,
                                                   delta_size=args.deltasize, release_date=args.date,
-                                                  code_id=args.codeid)
+                                                  code_id=args.codeid, dryrun=args.dryrun)
 
     except KeyboardInterrupt:
         print('Interrupted')
