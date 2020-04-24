@@ -231,15 +231,16 @@ optional arguments:
 Interface for the Releases API
 ```
 #: python epcli releases --help
-usage: epcli releases [-h] {list,create} ...
+usage: epcli releases [-h] {list,create,delete} ...
 
 positional arguments:
-  {list,create}  Releases operation help
-    list         List releases
-    create       List releases
+  {list,create,delete}  Releases operation help
+    list                List releases
+    create              List releases
+    delete              List releases
 
 optional arguments:
-  -h, --help     show this help message and exit
+  -h, --help            show this help message and exit
 ```
 
 #### - List
@@ -258,7 +259,7 @@ optional arguments:
                         Set the base URI (default: staging)
   -f, --force           Detached mode, does not show any warning if production
                         environment is selected
-  --osid OSID           Operating System'id associated to release
+  --osid OSID           Operating System's id associated to release
   --codeid CODEID       Operating System's code associated to release
 ```
 
@@ -280,8 +281,8 @@ optional arguments:
                         Set the base URI (default: staging)
   -f, --force           Detached mode, does not show any warning if production
                         environment is selected
-  --osid OSID           Operating System'id associated to release
-  --codeid CODEID       Operating System'code associated to release
+  --osid OSID           Operating System's id associated to release
+  --codeid CODEID       Operating System's code associated to release
   --version VERSION     OS Version
   --changelog CHANGELOG
                         Os release changelog
@@ -291,3 +292,26 @@ optional arguments:
   --dryrun              Remove the release after insert
 ```
 ---
+
+
+#### - Delete
+Utility to remove a release on a single operating system.
+```
+#: python epcli releases delete --help
+usage: epcli releases delete [-h] -u USER [-p PWD]
+                             [-e {test,staging,production}] [-f] [--osid OSID]
+                             [--codeid CODEID] --releaseid RELEASEID
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
+  -e {test,staging,production}, --environment {test,staging,production}
+                        Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
+  --osid OSID           Operating System's id associated to release
+  --codeid CODEID       Operating System's code associated to release
+  --releaseid RELEASEID
+                        Release's id
+```

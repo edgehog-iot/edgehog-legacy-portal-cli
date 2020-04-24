@@ -94,19 +94,26 @@ def main():
         # release list parser
         releases_list_parser = releases_subparsers.add_parser('list', help='List releases')
         add_common_params(releases_list_parser)
-        releases_list_parser.add_argument('--osid', type=str, help='Operating System\'id associated to release')
+        releases_list_parser.add_argument('--osid', type=str, help='Operating System\'s id associated to release')
         releases_list_parser.add_argument('--codeid', type=str, help='Operating System\'s code associated to release')
 
         # release create parser
         releases_create_parser = releases_subparsers.add_parser('create', help='List releases')
         add_common_params(releases_create_parser)
-        releases_create_parser.add_argument('--osid', type=str, help='Operating System\'id associated to release')
-        releases_create_parser.add_argument('--codeid', type=str, help='Operating System\'code associated to release')
+        releases_create_parser.add_argument('--osid', type=str, help='Operating System\'s id associated to release')
+        releases_create_parser.add_argument('--codeid', type=str, help='Operating System\'s code associated to release')
         releases_create_parser.add_argument('--version', required=True, type=str, help='OS Version')
         releases_create_parser.add_argument('--changelog', required=True, type=str, help='Os release changelog')
         releases_create_parser.add_argument('--deltasize', required=True, type=int, help='Delta size in MB')
         releases_create_parser.add_argument('--date', type=str, help='Release date (default: now)')
         releases_create_parser.add_argument('--dryrun', help='Remove the release after insert', action='store_true')
+        
+        # release delete parser
+        releases_delete_parser = releases_subparsers.add_parser('delete', help='List releases')
+        add_common_params(releases_delete_parser)
+        releases_delete_parser.add_argument('--osid', type=str, help='Operating System\'s id associated to release')
+        releases_delete_parser.add_argument('--codeid', type=str, help='Operating System\'s code associated to release')
+        releases_delete_parser.add_argument('--releaseid', required=True, type=str, help='Release\'s id')
 
         args = parser.parse_args()
 
@@ -163,6 +170,9 @@ def main():
                                                   version=args.version, changelog=args.changelog,
                                                   delta_size=args.deltasize, release_date=args.date,
                                                   code_id=args.codeid, dryrun=args.dryrun)
+            elif args.action == 'delete':
+                operating_systems.delete_releases(used_base_url, args.user, user_password, os_id=args.osid,
+                                                  code_id=args.codeid, release_id=args.releaseid)
 
     except KeyboardInterrupt:
         print('Interrupted')

@@ -144,3 +144,29 @@ def create_releases(uri: str, user: str, password: str, os_id: str, code_id: str
 
     pprint.pprint(result, indent=4)
     logout(uri, token)
+
+
+def delete_releases(uri: str, user: str, password: str, os_id: str, code_id: str, release_id: str):
+    token = login(uri, user, password)
+    if len(token) == 0:
+        return
+
+    if code_id is not None:
+        oses = get_oses_request(uri, user, password, code_id)
+        if oses.__len__() != 1:
+            print("{{ 'success': false,"
+                  "'message':'Error in code_id filter: expected 1 OS, {} found'}}".format(oses.__len__()))
+            sys.exit(1)
+        else:
+            os_id = oses[0].get('id')
+    elif os_id is None:
+        print("{ \"success\": false,"
+              "\"message\":\"No OS identifier found\"}")
+        sys.exit(1)
+
+    headers = get_authorized_headers(token)
+    delete_release_request = requests.delete((RELEASES_API_V1+"/{}").format(uri, os_id, release_id), headers=headers)
+    result = delete_release_request.json()
+
+    pprint.pprint(result, indent=4)
+    logout(uri, token)
