@@ -1,5 +1,6 @@
+import json
+
 import requests
-import pprint
 from io import TextIOWrapper
 
 from ep_operations.auth import login, logout
@@ -43,7 +44,8 @@ def binding(uri: str, user: str, password: str, company: str = None, hardware_id
     if output_file:
         success = True
         for response in responses:
-            output_file.write(pprint.pformat(response, indent=4))
+            json.dump(response, output_file, indent=4)
+            # output_file.write(pprint.pformat(response, indent=4))
             success = success and response.get('success', False)
         output_file.close()
         print('{} operations elaborated'.format(len(responses)))
@@ -51,7 +53,8 @@ def binding(uri: str, user: str, password: str, company: str = None, hardware_id
             print('Some error occurred. For more info see: {}.'.format(output_file.name))
     else:
         for response in responses:
-            pprint.pprint(response, indent=4)
+            # pprint.pprint(response, indent=4)
+            print(json.dumps(response, indent=4))
 
     logout(uri, token)
 

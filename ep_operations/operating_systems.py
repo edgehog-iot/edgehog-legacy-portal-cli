@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-
+import json
 import sys
 import requests
-import pprint
 
 from datetime import datetime
 from ep_operations.auth import login, logout
@@ -13,7 +12,9 @@ RELEASES_API_V1 = "{}/iapi/v1/operating-systems/{}/releases"
 
 
 def get_oses(uri: str, user: str, password: str, code_id: str):
-    pprint.pprint(get_oses_request(uri, user, password, code_id), indent=4)
+    # pprint.pprint(get_oses_request(uri, user, password, code_id), indent=4)
+    result = get_oses_request(uri, user, password, code_id)
+    print(json.dumps(result, indent=4))
 
 
 def get_oses_request(uri: str, user: str, password: str, code_id: str):
@@ -65,7 +66,7 @@ def create_os(uri: str, user: str, password: str, name: str, description: str, r
     create_oss_request = requests.post(OS_API_V1.format(uri), headers=headers, params=body)
     result = create_oss_request.json()
 
-    pprint.pprint(result, indent=4)
+    print(json.dumps(result, indent=4))
     logout(uri, token)
 
 
@@ -98,7 +99,8 @@ def get_releases(uri: str, user: str, password: str, os_id: str, code_id: str):
             "release_date": release.get("release_date")
         })
 
-    pprint.pprint(releases, indent=4)
+    # pprint.pprint(releases, indent=4)
+    print(json.dumps(releases, indent=4))
     logout(uri, token)
 
 
@@ -142,7 +144,7 @@ def create_releases(uri: str, user: str, password: str, os_id: str, code_id: str
             delete_result = delete_release_request.json()
             result['dryrun_success'] = delete_result.get('success', False)
 
-    pprint.pprint(result, indent=4)
+    print(json.dumps(result, indent=4))
     logout(uri, token)
 
 
@@ -168,5 +170,5 @@ def delete_releases(uri: str, user: str, password: str, os_id: str, code_id: str
     delete_release_request = requests.delete((RELEASES_API_V1+"/{}").format(uri, os_id, release_id), headers=headers)
     result = delete_release_request.json()
 
-    pprint.pprint(result, indent=4)
+    print(json.dumps(result, indent=4))
     logout(uri, token)

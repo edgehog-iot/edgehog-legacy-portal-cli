@@ -1,5 +1,6 @@
+import json
+
 import requests
-import pprint
 from ep_operations.auth import login, logout
 from ep_operations.common import get_authorized_headers
 from ep_operations.operating_systems import get_oses_request
@@ -9,7 +10,8 @@ ADD_OS_V1_API = GET_COMPANIES_V1_API + "/{}/operating-systems"
 
 
 def get_companies(uri: str, user: str, password: str, company_code: str = None):
-    pprint.pprint(get_companies_request(uri, user, password, company_code), indent=4)
+    result = get_companies_request(uri, user, password, company_code)
+    print(json.dumps(result, indent=4))
 
 
 def get_companies_request(uri: str, user: str, password: str, company_code: str):
@@ -74,7 +76,7 @@ def add_os(uri: str, user: str, password: str, company_code: str, os_code_id: st
 
     logout(uri, token)
 
-    pprint.pprint(result, indent=4)
+    print(json.dumps(result, indent=4))
 
 
 def get_os(uri: str, user: str, password: str, company_code: str):
@@ -97,4 +99,4 @@ def get_os(uri: str, user: str, password: str, company_code: str):
 
     logout(uri, token)
 
-    pprint.pprint(result, indent=4)
+    print(json.dumps(result, indent=4))
