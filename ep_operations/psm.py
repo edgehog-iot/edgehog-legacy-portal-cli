@@ -1,5 +1,5 @@
 import json
-
+import random
 import requests
 from io import TextIOWrapper
 
@@ -19,7 +19,7 @@ def binding(uri: str, user: str, password: str, company: str = None, hardware_id
 
     responses = []
 
-    if hardware_id and gateway_serial_number and company:
+    if hardware_id and gateway_serial_number:
         responses.append(__binding_request(uri, token, company, hardware_id, gateway_serial_number, dryrun))
     elif input_file:
         line = input_file.readline()
@@ -37,7 +37,7 @@ def binding(uri: str, user: str, password: str, company: str = None, hardware_id
             line = input_file.readline()
         input_file.close()
     else:
-        print("Error:\n[--hardware_id, --serial_number, --company] or [--input, [--company]] "
+        print("Error:\n[--hardware_id, --serial_number] or [--input, [--company]] "
               "required parameters for 'binding' operation")
         return
 
@@ -64,9 +64,15 @@ def __binding_request(uri: str, token: str, company: str = None, hardware_id: st
     binding_headers = get_authorized_headers(token)
     body = {
         "hardware_id": hardware_id,
-        "gateway_serial_number": gateway_serial_number,
-        "customer_code": company
+        "gateway_serial_number": gateway_serial_number
     }
+    if company:
+        body["customer_code"] = company
+    else:
+        rnd1 = random.randint(100, 999)
+        rnd2 = random.randint(100, 999)
+        rnd3 = random.randint(100, 999)
+        body["registration_code"] = "RC{}-{}-{}".format(rnd1,rnd2, rnd3)
     binding_request = requests.post(BINDING_API_V1.format(uri), headers=binding_headers, params=body)
     result = binding_request.json()
     if dryrun and result.get('success', False) and result.get('data'):
