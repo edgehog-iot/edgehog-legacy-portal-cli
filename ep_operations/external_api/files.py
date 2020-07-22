@@ -8,6 +8,7 @@ from ep_operations.auth import external_logout as logout
 from ep_operations.common import get_authorized_headers
 from typing import List
 from base64 import standard_b64encode
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 List_int = List[int]
 List_string = List[str]
@@ -48,22 +49,29 @@ def add_file(uri: str, user: str, password: str, name: str, description: str, fi
     if len(token) == 0:
         return
 
+    print(name)
+
+    mp_encoder = MultipartEncoder(
+        fields={
+            "name": name,
+            "description": description,
+            "file[file]":  ('001-instagram.png', open('/home/alessandro/Downloads/immagini/001-instagram.png', 'rb'), 'image/png'),
+            "file[description]": file_description,
+            "file[inflate]": "0",
+            "ack": "1",
+            "remote_path": remote_path,
+        }
+    )
+
     uri = (GET_FILES_V1_API+"?XDEBUG_SESSION_START=PHPSTORM").format(uri)
-    headers = get_authorized_headers(token, content_type="multipart/form-data")
+    headers = get_authorized_headers(token, content_type=mp_encoder.content_type)
     body = {
-        "name": name,
-        "description": description,
-        # "file[file]": file,
-        "file[description]": file_description,
-        "file[inflate]": inflate,
-        "ack": ack,
-        "remote_path": remote_path,
-        "tags": tags
+
     }
 
-    files = {"file[file]": file}
+    files = {}
 
-    add_file_request = requests.post(uri, headers=headers, data=body, files=files)
+    add_file_request = requests.post(uri, headers=headers, data=mp_encoder)
     response = add_file_request.json()
 
     print(json.dumps(response))
