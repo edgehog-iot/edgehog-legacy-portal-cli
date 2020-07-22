@@ -3,7 +3,7 @@ import random
 import requests
 from io import TextIOWrapper
 
-from ep_operations.auth import login, logout
+from ep_operations.auth import internal_login, internal_logout
 from ep_operations.common import get_authorized_headers
 
 BINDING_API_V1 = "{}/iapi/v1/psm/sn-binding"
@@ -13,7 +13,7 @@ POST_BINDING_API_V1 = "{}/iapi/v1/psm/sn-binding/{}"
 def binding(uri: str, user: str, password: str, company: str = None, hardware_id: str = None,
             gateway_serial_number: str = None, input_file: TextIOWrapper = None,
             output_file: TextIOWrapper = None, dryrun: bool = False):
-    token = login(uri, user, password)
+    token = internal_login(uri, user, password)
     if len(token) == 0:
         return
 
@@ -56,7 +56,7 @@ def binding(uri: str, user: str, password: str, company: str = None, hardware_id
             # pprint.pprint(response, indent=4)
             print(json.dumps(response, indent=4))
 
-    logout(uri, token)
+    internal_logout(uri, token)
 
 
 def __binding_request(uri: str, token: str, company: str = None, hardware_id: str = None,

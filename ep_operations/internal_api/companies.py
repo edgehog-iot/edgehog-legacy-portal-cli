@@ -1,9 +1,9 @@
 import json
 
 import requests
-from ep_operations.auth import login, logout
+from ep_operations.auth import internal_login, internal_logout
 from ep_operations.common import get_authorized_headers
-from ep_operations.operating_systems import get_oses_request
+from ep_operations.internal_api.operating_systems import get_oses_request
 
 GET_COMPANIES_V1_API = "{}/iapi/v1/companies"
 ADD_OS_V1_API = GET_COMPANIES_V1_API + "/{}/operating-systems"
@@ -15,7 +15,7 @@ def get_companies(uri: str, user: str, password: str, company_code: str = None):
 
 
 def get_companies_request(uri: str, user: str, password: str, company_code: str):
-    token = login(uri, user, password)
+    token = internal_login(uri, user, password)
     if len(token) == 0:
         return
 
@@ -40,12 +40,12 @@ def get_companies_request(uri: str, user: str, password: str, company_code: str)
             "active": company.get("active")
         })
 
-    logout(uri, token)
+    internal_logout(uri, token)
     return companies
 
 
 def add_os(uri: str, user: str, password: str, company_code: str, os_code_id: str):
-    token = login(uri, user, password)
+    token = internal_login(uri, user, password)
     if len(token) == 0:
         return
 
@@ -74,13 +74,13 @@ def add_os(uri: str, user: str, password: str, company_code: str, os_code_id: st
     add_os_request = requests.post(ADD_OS_V1_API.format(uri, company_id), headers=headers, params=body)
     result = add_os_request.json()
 
-    logout(uri, token)
+    internal_logout(uri, token)
 
     print(json.dumps(result, indent=4))
 
 
 def get_os(uri: str, user: str, password: str, company_code: str):
-    token = login(uri, user, password)
+    token = internal_login(uri, user, password)
     if len(token) == 0:
         return
 
@@ -97,6 +97,6 @@ def get_os(uri: str, user: str, password: str, company_code: str):
     get_os_request = requests.get(ADD_OS_V1_API.format(uri, company_id), headers=headers)
     result = get_os_request.json()
 
-    logout(uri, token)
+    internal_logout(uri, token)
 
     print(json.dumps(result, indent=4))

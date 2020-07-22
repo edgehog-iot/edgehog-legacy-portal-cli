@@ -5,11 +5,12 @@ import getpass
 import sys
 import os
 
-from ep_operations import *
+from ep_operations.internal_api import companies, operating_systems, psm
+from ep_operations.external_api import gateways, models, applications, files
 
 # Base URIs
 
-TEST_BASE_URI = "http://homestead.test"
+TEST_BASE_URI = "http://19415348669c.ngrok.io"  # "http://homestead.test"
 STAGING_BASE_URI = "https://staging-eu.syntheticbrain.cloud"
 PRODUCTION_BASE_URI = "https://edgehog.cloud"
 
@@ -41,16 +42,6 @@ def main():
                                     default=None, help='Output files containing server responses')
         binding_parser.add_argument('--dryrun', help='Remove binding after insert', action='store_true')
 
-        # deregister parser
-        deregister_parser = subparsers.add_parser('deregister', help='Deregister gateway')
-        add_common_params(deregister_parser)
-        deregister_parser.add_argument('--hardwareid', nargs='?', metavar='16 CHAR', type=str, help='Gateway CPU id')
-        deregister_parser.add_argument('-i', '--input', nargs='?', type=argparse.FileType('r'), const='./input.csv',
-                                       default=None,
-                                       help='Input CSV files containing values for the requested operation')
-        deregister_parser.add_argument('-o', '--output', nargs='?', type=argparse.FileType('w'), const='./output.json',
-                                       default=None, help='Output files containing server responses')
-
         # companies parser
         companies_parser = subparsers.add_parser('companies', help='List all available companies')
         companies_subparsers = companies_parser.add_subparsers(help='Operations on Companies API', dest='action')
@@ -59,11 +50,11 @@ def main():
         companies_list_parser = companies_subparsers.add_parser('list', help='List companies')
         add_common_params(companies_list_parser)
         # company get os
-        companies_get_os_parser = companies_subparsers.add_parser('getos', help='List companies')
+        companies_get_os_parser = companies_subparsers.add_parser('getos', help='List os associated to the company')
         add_common_params(companies_get_os_parser)
         companies_get_os_parser.add_argument('--companycode', required=True, type=str, help='Company code')
         # company add os
-        companies_add_os_parser = companies_subparsers.add_parser('addos', help='List companies')
+        companies_add_os_parser = companies_subparsers.add_parser('addos', help='Add OS to a company')
         add_common_params(companies_add_os_parser)
         companies_add_os_parser.add_argument('--companycode', required=True, type=str, help='Company code')
         companies_add_os_parser.add_argument('--oscode', required=True, type=str, help='Operating System code')
@@ -72,12 +63,10 @@ def main():
         os_parser = subparsers.add_parser('os', help='Operation on Operating system API')
         os_subparsers = os_parser.add_subparsers(help='OS operation help', dest='action')
         os_subparsers.required = True
-
         # os list parser
         os_list_parser = os_subparsers.add_parser('list', help='List Operating Systems')
         add_common_params(os_list_parser)
         os_list_parser.add_argument('--codeid', type=str, help='Operating System\'s code associated to release')
-
         # os create parser
         os_create_parser = os_subparsers.add_parser('create', help='Create new Operating System')
         add_common_params(os_create_parser)
@@ -90,15 +79,13 @@ def main():
         releases_parser = subparsers.add_parser('releases', help='Operations on Releases API')
         releases_subparsers = releases_parser.add_subparsers(help='Releases operation help', dest='action')
         releases_subparsers.required = True
-
         # release list parser
         releases_list_parser = releases_subparsers.add_parser('list', help='List releases')
         add_common_params(releases_list_parser)
         releases_list_parser.add_argument('--osid', type=str, help='Operating System\'s id associated to release')
         releases_list_parser.add_argument('--codeid', type=str, help='Operating System\'s code associated to release')
-
         # release create parser
-        releases_create_parser = releases_subparsers.add_parser('create', help='List releases')
+        releases_create_parser = releases_subparsers.add_parser('create', help='Create a release')
         add_common_params(releases_create_parser)
         releases_create_parser.add_argument('--osid', type=str, help='Operating System\'s id associated to release')
         releases_create_parser.add_argument('--codeid', type=str, help='Operating System\'s code associated to release')
@@ -107,16 +94,87 @@ def main():
         releases_create_parser.add_argument('--deltasize', required=True, type=int, help='Delta size in MB')
         releases_create_parser.add_argument('--date', type=str, help='Release date (default: now)')
         releases_create_parser.add_argument('--dryrun', help='Remove the release after insert', action='store_true')
-        
         # release delete parser
-        releases_delete_parser = releases_subparsers.add_parser('delete', help='List releases')
+        releases_delete_parser = releases_subparsers.add_parser('delete', help='Delete a release')
         add_common_params(releases_delete_parser)
         releases_delete_parser.add_argument('--osid', type=str, help='Operating System\'s id associated to release')
         releases_delete_parser.add_argument('--codeid', type=str, help='Operating System\'s code associated to release')
         releases_delete_parser.add_argument('--releaseid', required=True, type=str, help='Release\'s id')
 
-        args = parser.parse_args()
+        # models parser
+        models_parser = subparsers.add_parser('models', help='List all available models')
+        models_subparsers = models_parser.add_subparsers(help='Operations on models public API', dest='action')
+        models_subparsers.required = True
+        # model list parser
+        models_list_parser = models_subparsers.add_parser('list', help='List models')
+        add_common_params(models_list_parser)
 
+        # gateways parser
+        gateways_parser = subparsers.add_parser('gateways', help='List all available public gateways')
+        gateways_subparsers = gateways_parser.add_subparsers(help='Operations on gateways API', dest='action')
+        gateways_subparsers.required = True
+        # gateway list parser
+        gateways_list_parser = gateways_subparsers.add_parser('list', help='List gateways')
+        add_common_params(gateways_list_parser)
+        # gateway unassociated parser
+        gateways_unassociated_parser = gateways_subparsers.add_parser('unassociated', help='List unassociated gateways')
+        add_common_params(gateways_unassociated_parser)
+        # gateway add parser
+        gateways_add_parser = gateways_subparsers.add_parser('add', help='Add a new gateway to user account''s company')
+        add_common_params(gateways_add_parser)
+        gateways_add_parser.add_argument('--serialnumber', metavar='K... CODE', type=str,
+                                         help='Gateway Serial Number')
+        gateways_add_parser.add_argument('--registrationcode', metavar='registration code', type=str,
+                                         help='Gateway Serial Number')
+
+        # apps parser
+        apps_parser = subparsers.add_parser('apps', help='list all available apps')
+        apps_subparsers = apps_parser.add_subparsers(help='Operations on apps API', dest='action')
+        apps_subparsers.required = True
+        # apps list
+        apps_list_parser = apps_subparsers.add_parser('list', help='List all available apps')
+        add_common_params(apps_list_parser)
+        apps_list_parser.add_argument('--appid', nargs='?', help='Application ID')
+        # apps add
+        apps_add_parser = apps_subparsers.add_parser('add', help='Add a new app to your company')
+        add_common_params(apps_add_parser)
+        apps_add_parser.add_argument('--name', help='Application name')
+        apps_add_parser.add_argument('--description', help='Application description')
+        apps_add_parser.add_argument('--configfile', type=argparse.FileType('rb'), help='Configuration file')
+        apps_add_parser.add_argument('--start', help='Start on Install or update', type=bool)
+        apps_add_parser.add_argument('--tags', nargs='*', help='Application tags')
+        apps_add_parser.add_argument('--gatewaymodels', nargs='+', help='Gateway models IDs', type=int)
+        # apps edit DISABILITATO FINO A RIMOZIONE DI UPDATED_AT
+        # apps_update_parser = apps_subparsers.add_parser('update', help='Update a app to your company')
+        # add_common_params(apps_update_parser)
+        # apps_update_parser.add_argument('--appid', nargs='?', help='Application ID')
+        # apps_update_parser.add_argument('--name', help='Application name')
+        # apps_update_parser.add_argument('--description', help='Application description')
+        # apps_update_parser.add_argument('--configfile', type=argparse.FileType('rb'), help='Configuration file')
+        # apps_update_parser.add_argument('--start', help='Start on Install or update', type=bool)
+        # apps_update_parser.add_argument('--tags', nargs='*', help='Application tags')
+
+        # file parser
+        files_parser = subparsers.add_parser('files', help='list all available files')
+        files_subparsers = files_parser.add_subparsers(help='Operations on files API', dest='action')
+        files_subparsers.required = True
+        # files list
+        files_list_parser = files_subparsers.add_parser('list', help='List all available file models')
+        add_common_params(files_list_parser)
+        files_list_parser.add_argument('--fileid', nargs='?', help='File model ID')
+        # files add
+        files_add_parser = files_subparsers.add_parser('add', help='Add a new file model')
+        add_common_params(files_add_parser)
+        files_add_parser.add_argument('--name', help='File model name')
+        files_add_parser.add_argument('--description', help='File model description')
+        files_add_parser.add_argument('--file', type=argparse.FileType('rb'), help='Initial revision of the model')
+        files_add_parser.add_argument('--inflate', nargs="?", type=bool, default=False, help='Inflate the zip file')
+        files_add_parser.add_argument('--filedescription', help='Description for initial revision file')
+        files_add_parser.add_argument('--remotepath', help='Destination path')
+        files_add_parser.add_argument('--ack', help='Notify ack after download', type=bool)
+        files_add_parser.add_argument('--tags', nargs='*', help='File model tags')
+
+        args = parser.parse_args()
         if args.pwd is None:
             user_password = ''
         else:
@@ -135,7 +193,7 @@ def main():
                                 '|                 ATTENTION               |\n'
                                 '*******************************************\n'
                                 '\n'
-                                'Are you sure you want to work in production? [y/N]: ')
+                                'Are you sure you want to operate in production? [y/N]: ')
                 if confirm != 'y':
                     print('Please select another environment')
                     return
@@ -173,6 +231,35 @@ def main():
             elif args.action == 'delete':
                 operating_systems.delete_releases(used_base_url, args.user, user_password, os_id=args.osid,
                                                   code_id=args.codeid, release_id=args.releaseid)
+        elif args.operation == 'models':
+            if args.action == 'list':
+                models.get_models(used_base_url, args.user, user_password)
+        elif args.operation == 'gateways':
+            if args.action == 'list':
+                gateways.get_gateways(used_base_url, args.user, user_password, False)
+            elif args.action == 'unassociated':
+                gateways.get_gateways(used_base_url, args.user, user_password, True)
+            elif args.action == 'add':
+                gateways.add_gateway(used_base_url, args.user, user_password, registration_code=args.registrationcode,
+                                     serial_number=args.serialnumber)
+        elif args.operation == 'apps':
+            if args.action == 'list':
+                applications.get_apps(used_base_url, args.user, user_password, app_id=args.appid)
+            if args.action == 'add':
+                applications.add_app(used_base_url, args.user, user_password, name=args.name,
+                                     description=args.description, file=args.configfile,
+                                     start_on_install=args.start, gateway_model_ids=args.gatewaymodels, tags=args.tags)
+            if args.action == 'update':
+                applications.update_app(used_base_url, args.user, user_password, name=args.name,
+                                        description=args.description, file=args.configfile,
+                                        start_on_install=args.start, app_id=args.appid, tags=args.tags)
+        elif args.operation == 'files':
+            if args.action == 'list':
+                files.get_files(used_base_url, args.user, user_password, file_id=args.fileid)
+            if args.action == 'add':
+                files.add_file(used_base_url, args.user, user_password, name=args.name,
+                               description=args.description, file=args.file, file_description=args.filedescription,
+                               inflate=args.inflate, ack=args.ack, remote_path=args.remotepath, tags=args.tags)
 
     except KeyboardInterrupt:
         print('Interrupted')

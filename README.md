@@ -146,32 +146,6 @@ The file provided with the --input option must be a CSV in the format
 HARDWARE_ID, SERIAL_NUMBER[, COMPANY_ID]
 ```
 ---
-### Deregister
-Utility to deregister a gateway **[TBI]**
-
-```
-#: python epcli deregister --help
-usage: epcli deregister [-h] -u USER [-p PWD] [-e {test,staging,production}]
-                        [-f] [--hardwareid [16 CHAR]] [-i [INPUT]]
-                        [-o [OUTPUT]]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -u USER, --user USER  User email
-  -p PWD, --pwd PWD     User password
-  -e {test,staging,production}, --environment {test,staging,production}
-                        Set the base URI (default: staging)
-  -f, --force           Detached mode, does not show any warning if production
-                        environment is selected
-  --hardwareid [16 CHAR]
-                        Gateway CPU id
-  -i [INPUT], --input [INPUT]
-                        Input CSV files containing values for the requested
-                        operation
-  -o [OUTPUT], --output [OUTPUT]
-                        Output files containing server responses
-```
----
 ###OS
 Interface for the Operating Systems API
 ```
