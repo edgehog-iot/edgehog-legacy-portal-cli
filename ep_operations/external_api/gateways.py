@@ -26,40 +26,7 @@ def get_gateways(uri: str, user: str, password: str, unassociated: bool):
 
     gateways = []
     for gateway in gateways_dict.get('rows', []):
-        new_gw = {
-            "id": gateway.get("id"),
-            "hardware_id": gateway.get("hardware_id"),
-            "serial_number": gateway.get("serial_number"),
-            "connected": gateway.get("connected"),
-            "status": gateway.get("status"),
-            "device_manager_version": gateway.get("device_manager_version"),
-            "last_seen": gateway.get("last_seen"),
-            "imei": gateway.get("imei"),
-            "sim_card": gateway.get("id"),
-        }
-
-        model = gateway.get("model")
-        if model:
-            new_gw["model"] = {
-                "id": model.get("id"),
-                "vendor": model.get("id"),
-                "name": model.get("id")
-            }
-
-        os = gateway.get("os")
-        if os:
-            new_gw["os"] = {
-                "provisioning_status": os.get("provisioning_status")
-            }
-
-        device = gateway.get("device")
-        if device:
-            new_gw["device"] = {
-                "id": device.get("id"),
-                "serial_number": device.get("serial_number")
-            }
-
-        gateways.append(new_gw)
+        gateways.append(__clean_gateway(gateway))
 
     logout(uri, token)
     return print(json.dumps(gateways, indent=4))
@@ -87,3 +54,40 @@ def add_gateway(uri: str, user: str, password: str, registration_code: str, seri
     response = req.json()
 
     print(json.dumps(response))
+
+
+def __clean_gateway(gateway: dict):
+    new_gw = {
+        "id": gateway.get("id"),
+        "hardware_id": gateway.get("hardware_id"),
+        "serial_number": gateway.get("serial_number"),
+        "connected": gateway.get("connected"),
+        "status": gateway.get("status"),
+        "device_manager_version": gateway.get("device_manager_version"),
+        "last_seen": gateway.get("last_seen"),
+        "imei": gateway.get("imei"),
+        "sim_card": gateway.get("id"),
+    }
+
+    model = gateway.get("model")
+    if model:
+        new_gw["model"] = {
+            "id": model.get("id"),
+            "vendor": model.get("id"),
+            "name": model.get("id")
+        }
+
+    os = gateway.get("os")
+    if os:
+        new_gw["os"] = {
+            "provisioning_status": os.get("provisioning_status")
+        }
+
+    device = gateway.get("device")
+    if device:
+        new_gw["device"] = {
+            "id": device.get("id"),
+            "serial_number": device.get("serial_number")
+        }
+
+    return new_gw

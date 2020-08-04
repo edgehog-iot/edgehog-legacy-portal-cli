@@ -2,5 +2,7 @@ __all__ = {
     'models',
     'gateways',
     'applications',
-    'files'
+    'files',
+    'devices',
+    'os_campaign'
 }

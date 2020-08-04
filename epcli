@@ -6,17 +6,13 @@ import sys
 import os
 
 from ep_operations.internal_api import companies, operating_systems, psm
-from ep_operations.external_api import gateways, models, applications, files
+from ep_operations.external_api import gateways, models, applications, files, devices, os_campaign
 
 # Base URIs
 
 TEST_BASE_URI = "http://19415348669c.ngrok.io"  # "http://homestead.test"
 STAGING_BASE_URI = "https://staging-eu.syntheticbrain.cloud"
 PRODUCTION_BASE_URI = "https://edgehog.cloud"
-
-
-def deregister(uri: str, user: str, password: str, hardware_id: str):
-    print('[TBI] deregister')
 
 
 def main():
@@ -41,6 +37,16 @@ def main():
         binding_parser.add_argument('-o', '--output', nargs='?', type=argparse.FileType('w'), const='./output.json',
                                     default=None, help='Output files containing server responses')
         binding_parser.add_argument('--dryrun', help='Remove binding after insert', action='store_true')
+
+        # deregister parser
+        deregister_parser = subparsers.add_parser('deregister', help='Deregister gateway')
+        add_common_params(deregister_parser)
+        deregister_parser.add_argument('--hardwareid', nargs='?', metavar='16 CHAR', type=str, help='Gateway CPU id')
+        deregister_parser.add_argument('-i', '--input', nargs='?', type=argparse.FileType('r'), const='./input.csv',
+                                       default=None,
+                                       help='Input CSV files containing values for the requested operation')
+        deregister_parser.add_argument('-o', '--output', nargs='?', type=argparse.FileType('w'), const='./output.json',
+                                       default=None, help='Output files containing server responses')
 
         # companies parser
         companies_parser = subparsers.add_parser('companies', help='List all available companies')
@@ -127,6 +133,45 @@ def main():
         gateways_add_parser.add_argument('--registrationcode', metavar='registration code', type=str,
                                          help='Gateway Serial Number')
 
+        # devices parser
+        devices_parser = subparsers.add_parser('devices', help='list all available devices')
+        devices_subparsers = devices_parser.add_subparsers(help='Operations on devices API', dest='action')
+        devices_subparsers.required = True
+        # devices list
+        devices_list_parser = devices_subparsers.add_parser('list', help='List all available devices')
+        add_common_params(devices_list_parser)
+        devices_list_parser.add_argument('--deviceid', nargs='?', help='Device ID')
+        # devices add
+        devices_add_parser = devices_subparsers.add_parser('add', help='Add new devices')
+        add_common_params(devices_add_parser)
+        devices_add_parser.add_argument('--gatewayid', help='Gateway ID')
+        devices_add_parser.add_argument('--modelid', help='Gateway ID')
+        devices_add_parser.add_argument('--serialnumber', help='Device serial number')
+        devices_add_parser.add_argument('--name', help='Device name')
+        devices_add_parser.add_argument('--notes', nargs='?', help='Device notes')
+        # device provision
+        devices_provision_parser = devices_subparsers.add_parser('provision', help='Provision a device')
+        add_common_params(devices_provision_parser)
+        devices_provision_parser.add_argument('--deviceid', help='Device ID')
+        devices_provision_parser.add_argument('--gatewayserial', help='Gateway Serial number')
+        # device decommission
+        devices_decommission_parser = devices_subparsers.add_parser('decommission', help='End the life of a device')
+        add_common_params(devices_decommission_parser)
+        devices_decommission_parser.add_argument('--deviceid', help='Device ID')
+        devices_decommission_parser.add_argument('--serialnumber', help='Device Serial number')
+        # device reinstall os
+        devices_reinstallos_parser = devices_subparsers.add_parser('reinstallos',
+                                                                   help='Notify a firmware reset of a device')
+        add_common_params(devices_reinstallos_parser)
+        devices_reinstallos_parser.add_argument('--deviceid', help='Device ID')
+        devices_reinstallos_parser.add_argument('--serialnumber', help='Device Serial number')
+        # device reinstall os
+        devices_replacegw_parser = devices_subparsers.add_parser('replacegw',
+                                                                 help='Notify a gateway change on the device')
+        add_common_params(devices_replacegw_parser)
+        devices_replacegw_parser.add_argument('--deviceid', help='Device ID')
+        devices_replacegw_parser.add_argument('--gatewayid', help='New Gateway ID')
+        devices_replacegw_parser.add_argument('--serialnumber', help='Device Serial number')
         # apps parser
         apps_parser = subparsers.add_parser('apps', help='list all available apps')
         apps_subparsers = apps_parser.add_subparsers(help='Operations on apps API', dest='action')
@@ -173,6 +218,44 @@ def main():
         files_add_parser.add_argument('--remotepath', help='Destination path')
         files_add_parser.add_argument('--ack', help='Notify ack after download', type=bool)
         files_add_parser.add_argument('--tags', nargs='*', help='File model tags')
+        # version list
+        file_versions_list_parser = files_subparsers.add_parser('versions', help='List all available file versions')
+        add_common_params(file_versions_list_parser)
+        file_versions_list_parser.add_argument('--fileid', help='File model ID')
+        file_versions_list_parser.add_argument('--versionid', nargs='?', help='File version ID')
+        # files add version
+        file_versions_add_parser = files_subparsers.add_parser('addversion', help='Add a new file model')
+        add_common_params(file_versions_add_parser)
+        file_versions_add_parser.add_argument('--fileid', help='File model ID')
+        file_versions_add_parser.add_argument('--file', type=argparse.FileType('rb'),
+                                              help='Initial revision of the model')
+        file_versions_add_parser.add_argument('--inflate', nargs="?", type=bool, default=False,
+                                              help='Inflate the zip file')
+        file_versions_add_parser.add_argument('--filedescription', help='Description for initial revision file')
+        # os campaign parser
+        oscampaign_parser = subparsers.add_parser('oscampaign', help='list all available os campaign')
+        oscampaign_subparsers = oscampaign_parser.add_subparsers(help='Operations on os campaign API', dest='action')
+        oscampaign_subparsers.required = True
+        # os campaign list
+        oscampaign_list_parser = oscampaign_subparsers.add_parser('list', help='List all available os campaign')
+        add_common_params(oscampaign_list_parser)
+        oscampaign_list_parser.add_argument('--campaignid', nargs='?', help='Device ID')
+        # os campaign add
+        oscampaign_add_parser = oscampaign_subparsers.add_parser('add', help='Add new os campaign')
+        add_common_params(oscampaign_add_parser)
+        oscampaign_add_parser.add_argument('--name', help='Os campaign name')
+        oscampaign_add_parser.add_argument('--osid', type=int, help='OS to update id')
+        oscampaign_add_parser.add_argument('--timeout', nargs='?', help='Timeout in minutes')
+        oscampaign_add_parser.add_argument('--rollout', nargs='?', help='Rollout Rate')
+        oscampaign_add_parser.add_argument('--tags', nargs='*', help='Target devices tags')
+        # os campaign start
+        oscampaign_start_parser = oscampaign_subparsers.add_parser('start', help='List all available os campaign')
+        add_common_params(oscampaign_start_parser)
+        oscampaign_start_parser.add_argument('--campaignid', help='Device ID')
+        # os campaign cancel
+        oscampaign_cancel_parser = oscampaign_subparsers.add_parser('cancel', help='List all available os campaign')
+        add_common_params(oscampaign_cancel_parser)
+        oscampaign_cancel_parser.add_argument('--campaignid', help='Device ID')
 
         args = parser.parse_args()
         if args.pwd is None:
@@ -204,7 +287,7 @@ def main():
                         gateway_serial_number=args.serialnumber, input_file=args.input,
                         output_file=args.output, dryrun=args.dryrun)
         elif args.operation == 'deregister':
-            deregister(used_base_url, args.user, user_password, hardware_id=args.hardwareid)
+            psm.deregister(used_base_url, args.user, user_password, hardware_id=args.hardwareid)
         elif args.operation == 'companies':
             if args.action == 'list':
                 companies.get_companies(used_base_url, args.user, user_password)
@@ -245,21 +328,52 @@ def main():
         elif args.operation == 'apps':
             if args.action == 'list':
                 applications.get_apps(used_base_url, args.user, user_password, app_id=args.appid)
-            if args.action == 'add':
+            elif args.action == 'add':
                 applications.add_app(used_base_url, args.user, user_password, name=args.name,
                                      description=args.description, file=args.configfile,
                                      start_on_install=args.start, gateway_model_ids=args.gatewaymodels, tags=args.tags)
-            if args.action == 'update':
+            elif args.action == 'update':
                 applications.update_app(used_base_url, args.user, user_password, name=args.name,
                                         description=args.description, file=args.configfile,
                                         start_on_install=args.start, app_id=args.appid, tags=args.tags)
         elif args.operation == 'files':
             if args.action == 'list':
                 files.get_files(used_base_url, args.user, user_password, file_id=args.fileid)
-            if args.action == 'add':
+            elif args.action == 'add':
                 files.add_file(used_base_url, args.user, user_password, name=args.name,
                                description=args.description, file=args.file, file_description=args.filedescription,
                                inflate=args.inflate, ack=args.ack, remote_path=args.remotepath, tags=args.tags)
+            elif args.action == 'versions':
+                files.get_file_verions(used_base_url, args.user, user_password, file_id=args.fileid,
+                                       version_id=args.versionid)
+            elif args.action == 'addversion':
+                files.add_version(used_base_url, args.user, user_password, file_id=args.fileid, file=args.file,
+                                  file_description=args.filedescription, inflate=args.inflate)
+        elif args.operation == 'devices':
+            if args.action == 'list':
+                devices.get_devices(used_base_url, args.user, user_password, args.deviceid)
+            elif args.action == 'add':
+                devices.add_device(used_base_url, args.user, user_password, args.gatewayid, args.modelid,
+                                   args.serialnumber, args.name, args.notes)
+            elif args.action == 'provision':
+                devices.provision(used_base_url, args.user, user_password, args.deviceid, args.gatewayserial)
+            elif args.action == 'decommission':
+                devices.decommission(used_base_url, args.user, user_password, args.deviceid, args.serialnumber)
+            elif args.action == 'reinstallos':
+                devices.reinstall_os(used_base_url, args.user, user_password, args.deviceid, args.serialnumber)
+            elif args.action == 'replacegw':
+                devices.replace_gw(used_base_url, args.user, user_password, args.deviceid, args.gatewayid,
+                                   args.serialnumber)
+        elif args.operation == 'oscampaign':
+            if args.action == 'list':
+                os_campaign.get_os_campaigns(used_base_url, args.user, user_password, args.campaignid)
+            if args.action == 'add':
+                os_campaign.add_campaign(used_base_url, args.user, user_password, args.name, args.osid, args.tags,
+                                         timeout=args.timeout, rollout_rate=args.rollout)
+            if args.action == 'start':
+                os_campaign.start_cancel(used_base_url, args.user, user_password, args.campaignid, False)
+            if args.action == 'cancel':
+                os_campaign.start_cancel(used_base_url, args.user, user_password, args.campaignid, True)
 
     except KeyboardInterrupt:
         print('Interrupted')
