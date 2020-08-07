@@ -6,7 +6,8 @@ import sys
 import os
 
 from ep_operations.internal_api import companies, operating_systems, psm
-from ep_operations.external_api import gateways, models, applications, files, devices, os_campaign
+from ep_operations.external_api import gateways, models, applications, files, devices, os_campaign, file_campaign, \
+    apps_campaign
 
 # Base URIs
 
@@ -121,10 +122,8 @@ def main():
         gateways_subparsers.required = True
         # gateway list parser
         gateways_list_parser = gateways_subparsers.add_parser('list', help='List gateways')
+        gateways_list_parser.add_argument('--unassociated', nargs="?", type=bool, default=False, help='Inflate the zip file')
         add_common_params(gateways_list_parser)
-        # gateway unassociated parser
-        gateways_unassociated_parser = gateways_subparsers.add_parser('unassociated', help='List unassociated gateways')
-        add_common_params(gateways_unassociated_parser)
         # gateway add parser
         gateways_add_parser = gateways_subparsers.add_parser('add', help='Add a new gateway to user account''s company')
         add_common_params(gateways_add_parser)
@@ -245,8 +244,8 @@ def main():
         add_common_params(oscampaign_add_parser)
         oscampaign_add_parser.add_argument('--name', help='Os campaign name')
         oscampaign_add_parser.add_argument('--osid', type=int, help='OS to update id')
-        oscampaign_add_parser.add_argument('--timeout', nargs='?', help='Timeout in minutes')
-        oscampaign_add_parser.add_argument('--rollout', nargs='?', help='Rollout Rate')
+        oscampaign_add_parser.add_argument('--timeout', nargs='?', default=30, help='Timeout in minutes')
+        oscampaign_add_parser.add_argument('--rollout', nargs='?', default=5, help='Rollout Rate')
         oscampaign_add_parser.add_argument('--tags', nargs='*', help='Target devices tags')
         # os campaign start
         oscampaign_start_parser = oscampaign_subparsers.add_parser('start', help='List all available os campaign')
@@ -256,6 +255,60 @@ def main():
         oscampaign_cancel_parser = oscampaign_subparsers.add_parser('cancel', help='List all available os campaign')
         add_common_params(oscampaign_cancel_parser)
         oscampaign_cancel_parser.add_argument('--campaignid', help='Device ID')
+        # app campaign parser
+        appcampaign_parser = subparsers.add_parser('appcampaign', help='list all available app campaign')
+        appcampaign_subparsers = appcampaign_parser.add_subparsers(help='Operations on app campaign API', dest='action')
+        appcampaign_subparsers.required = True
+        # app campaign list
+        appcampaign_list_parser = appcampaign_subparsers.add_parser('list', help='List all available app campaign')
+        add_common_params(appcampaign_list_parser)
+        appcampaign_list_parser.add_argument('--campaignid', nargs='?', help='Device ID')
+        # app campaign add
+        appcampaign_add_parser = appcampaign_subparsers.add_parser('add', help='Add new app campaign')
+        add_common_params(appcampaign_add_parser)
+        appcampaign_add_parser.add_argument('--name', help='App campaign name')
+        appcampaign_add_parser.add_argument('--appid', type=int, help='App to update id')
+        appcampaign_add_parser.add_argument('--campaignop', choices=['install', 'update', 'install_update', 'start', 'stop'],
+                                            help='Action executed by the campaign')
+        appcampaign_add_parser.add_argument('--timeout', nargs='?', default=30, help='Timeout in minutes')
+        appcampaign_add_parser.add_argument('--rollout', nargs='?', default=5, help='Rollout Rate')
+        appcampaign_add_parser.add_argument('--tags', nargs='*', help='Target devices tags')
+        # app campaign start
+        appcampaign_start_parser = appcampaign_subparsers.add_parser('start', help='List all available app campaign')
+        add_common_params(appcampaign_start_parser)
+        appcampaign_start_parser.add_argument('--campaignid', help='Device ID')
+        # app campaign cancel
+        appcampaign_cancel_parser = appcampaign_subparsers.add_parser('cancel', help='List all available app campaign')
+        add_common_params(appcampaign_cancel_parser)
+        appcampaign_cancel_parser.add_argument('--campaignid', help='Device ID')
+        # file campaign parser
+        filecampaign_parser = subparsers.add_parser('filecampaign', help='list all available file campaign')
+        filecampaign_subparsers = filecampaign_parser.add_subparsers(help='Operations on file campaign API',
+                                                                     dest='action')
+        filecampaign_subparsers.required = True
+        # file campaign list
+        filecampaign_list_parser = filecampaign_subparsers.add_parser('list', help='List all available file campaign')
+        add_common_params(filecampaign_list_parser)
+        filecampaign_list_parser.add_argument('--campaignid', nargs='?', help='Device ID')
+        # file campaign add
+        filecampaign_add_parser = filecampaign_subparsers.add_parser('add', help='Add new file campaign')
+        add_common_params(filecampaign_add_parser)
+        filecampaign_add_parser.add_argument('--name', help='File campaign name')
+        filecampaign_add_parser.add_argument('--fileid', type=int, help='File to update id')
+        filecampaign_add_parser.add_argument('--campaignop', choices=['install', 'update', 'install_update'],
+                                             help='Action executed by the campaign')
+        filecampaign_add_parser.add_argument('--timeout', nargs='?', default=30, help='Timeout in minutes')
+        filecampaign_add_parser.add_argument('--rollout', nargs='?', default=5, help='Rollout Rate')
+        filecampaign_add_parser.add_argument('--tags', nargs='*', help='Target devices tags')
+        # file campaign start
+        filecampaign_start_parser = filecampaign_subparsers.add_parser('start', help='List all available file campaign')
+        add_common_params(filecampaign_start_parser)
+        filecampaign_start_parser.add_argument('--campaignid', help='Device ID')
+        # file campaign cancel
+        filecampaign_cancel_parser = filecampaign_subparsers.add_parser('cancel',
+                                                                        help='List all available file campaign')
+        add_common_params(filecampaign_cancel_parser)
+        filecampaign_cancel_parser.add_argument('--campaignid', help='Device ID')
 
         args = parser.parse_args()
         if args.pwd is None:
@@ -319,9 +372,7 @@ def main():
                 models.get_models(used_base_url, args.user, user_password)
         elif args.operation == 'gateways':
             if args.action == 'list':
-                gateways.get_gateways(used_base_url, args.user, user_password, False)
-            elif args.action == 'unassociated':
-                gateways.get_gateways(used_base_url, args.user, user_password, True)
+                gateways.get_gateways(used_base_url, args.user, user_password, args.unassociated)
             elif args.action == 'add':
                 gateways.add_gateway(used_base_url, args.user, user_password, registration_code=args.registrationcode,
                                      serial_number=args.serialnumber)
@@ -367,13 +418,33 @@ def main():
         elif args.operation == 'oscampaign':
             if args.action == 'list':
                 os_campaign.get_os_campaigns(used_base_url, args.user, user_password, args.campaignid)
-            if args.action == 'add':
-                os_campaign.add_campaign(used_base_url, args.user, user_password, args.name, args.osid, args.tags,
-                                         timeout=args.timeout, rollout_rate=args.rollout)
-            if args.action == 'start':
+            elif args.action == 'add':
+                os_campaign.add(used_base_url, args.user, user_password, args.name, args.osid, args.tags,
+                                timeout=args.timeout, rollout_rate=args.rollout)
+            elif args.action == 'start':
                 os_campaign.start_cancel(used_base_url, args.user, user_password, args.campaignid, False)
-            if args.action == 'cancel':
+            elif args.action == 'cancel':
                 os_campaign.start_cancel(used_base_url, args.user, user_password, args.campaignid, True)
+        elif args.operation == 'filecampaign':
+            if args.action == 'list':
+                file_campaign.get_file_campaigns(used_base_url, args.user, user_password, args.campaignid)
+            elif args.action == 'add':
+                file_campaign.add(used_base_url, args.user, user_password, args.name, args.fileid, args.tags,
+                                  operation=args.campaignop, timeout=args.timeout, rollout_rate=args.rollout)
+            elif args.action == 'start':
+                file_campaign.start_cancel(used_base_url, args.user, user_password, args.campaignid, False)
+            elif args.action == 'cancel':
+                file_campaign.start_cancel(used_base_url, args.user, user_password, args.campaignid, True)
+        elif args.operation == 'appcampaign':
+            if args.action == 'list':
+                apps_campaign.get_app_campaigns(used_base_url, args.user, user_password, args.campaignid)
+            elif args.action == 'add':
+                apps_campaign.add(used_base_url, args.user, user_password, args.name, args.appid, args.tags,
+                                  operation=args.campaignop, timeout=args.timeout, rollout_rate=args.rollout)
+            elif args.action == 'start':
+                apps_campaign.start_cancel(used_base_url, args.user, user_password, args.campaignid, False)
+            elif args.action == 'cancel':
+                apps_campaign.start_cancel(used_base_url, args.user, user_password, args.campaignid, True)
 
     except KeyboardInterrupt:
         print('Interrupted')

@@ -4,5 +4,7 @@ __all__ = {
     'applications',
     'files',
     'devices',
-    'os_campaign'
+    'campaigns',
+    'os_campaign',
+    'file_campaign'
 }
