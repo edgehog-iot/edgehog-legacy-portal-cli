@@ -5,9 +5,8 @@ import getpass
 import sys
 import os
 
-from ep_operations.internal_api import companies, operating_systems, psm
 from ep_operations.external_api import gateways, models, applications, files, devices, os_campaign, file_campaign, \
-    apps_campaign
+    apps_campaign, os
 
 # Base URIs
 
@@ -26,46 +25,6 @@ def main():
         subparsers = parser.add_subparsers(help='operators help', dest='operation')
         subparsers.required = True
 
-        # binding parser
-        binding_parser = subparsers.add_parser('binding', help='Binding parameters')
-        add_common_params(binding_parser)
-        binding_parser.add_argument('--company', nargs='?', type=str, help='Company code')
-        binding_parser.add_argument('--hardwareid', nargs='?', metavar='16 CHAR', type=str, help='Gateway CPU id')
-        binding_parser.add_argument('--serialnumber', nargs='?', metavar='K... CODE', type=str,
-                                    help='Gateway Serial Number')
-        binding_parser.add_argument('-i', '--input', nargs='?', type=argparse.FileType('r'), const='./input.csv',
-                                    default=None, help='Input CSV files containing values for the requested operation')
-        binding_parser.add_argument('-o', '--output', nargs='?', type=argparse.FileType('w'), const='./output.json',
-                                    default=None, help='Output files containing server responses')
-        binding_parser.add_argument('--dryrun', help='Remove binding after insert', action='store_true')
-
-        # deregister parser
-        deregister_parser = subparsers.add_parser('deregister', help='Deregister gateway')
-        add_common_params(deregister_parser)
-        deregister_parser.add_argument('--hardwareid', nargs='?', metavar='16 CHAR', type=str, help='Gateway CPU id')
-        deregister_parser.add_argument('-i', '--input', nargs='?', type=argparse.FileType('r'), const='./input.csv',
-                                       default=None,
-                                       help='Input CSV files containing values for the requested operation')
-        deregister_parser.add_argument('-o', '--output', nargs='?', type=argparse.FileType('w'), const='./output.json',
-                                       default=None, help='Output files containing server responses')
-
-        # companies parser
-        companies_parser = subparsers.add_parser('companies', help='List all available companies')
-        companies_subparsers = companies_parser.add_subparsers(help='Operations on Companies API', dest='action')
-        companies_subparsers.required = True
-        # company list
-        companies_list_parser = companies_subparsers.add_parser('list', help='List companies')
-        add_common_params(companies_list_parser)
-        # company get os
-        companies_get_os_parser = companies_subparsers.add_parser('getos', help='List os associated to the company')
-        add_common_params(companies_get_os_parser)
-        companies_get_os_parser.add_argument('--companycode', required=True, type=str, help='Company code')
-        # company add os
-        companies_add_os_parser = companies_subparsers.add_parser('addos', help='Add OS to a company')
-        add_common_params(companies_add_os_parser)
-        companies_add_os_parser.add_argument('--companycode', required=True, type=str, help='Company code')
-        companies_add_os_parser.add_argument('--oscode', required=True, type=str, help='Operating System code')
-
         # os parser
         os_parser = subparsers.add_parser('os', help='Operation on Operating system API')
         os_subparsers = os_parser.add_subparsers(help='OS operation help', dest='action')
@@ -73,40 +32,7 @@ def main():
         # os list parser
         os_list_parser = os_subparsers.add_parser('list', help='List Operating Systems')
         add_common_params(os_list_parser)
-        os_list_parser.add_argument('--codeid', type=str, help='Operating System\'s code associated to release')
-        # os create parser
-        os_create_parser = os_subparsers.add_parser('create', help='Create new Operating System')
-        add_common_params(os_create_parser)
-        os_create_parser.add_argument('--codeid', required=True, type=str, help='Operating System code')
-        os_create_parser.add_argument('--name', required=True, type=str, help='Operating System name')
-        os_create_parser.add_argument('--description', required=True, type=str, help='Operating System description')
-        os_create_parser.add_argument('--url', required=True, type=str, help='Operating System URL')
-
-        # releases parser
-        releases_parser = subparsers.add_parser('releases', help='Operations on Releases API')
-        releases_subparsers = releases_parser.add_subparsers(help='Releases operation help', dest='action')
-        releases_subparsers.required = True
-        # release list parser
-        releases_list_parser = releases_subparsers.add_parser('list', help='List releases')
-        add_common_params(releases_list_parser)
-        releases_list_parser.add_argument('--osid', type=str, help='Operating System\'s id associated to release')
-        releases_list_parser.add_argument('--codeid', type=str, help='Operating System\'s code associated to release')
-        # release create parser
-        releases_create_parser = releases_subparsers.add_parser('create', help='Create a release')
-        add_common_params(releases_create_parser)
-        releases_create_parser.add_argument('--osid', type=str, help='Operating System\'s id associated to release')
-        releases_create_parser.add_argument('--codeid', type=str, help='Operating System\'s code associated to release')
-        releases_create_parser.add_argument('--version', required=True, type=str, help='OS Version')
-        releases_create_parser.add_argument('--changelog', required=True, type=str, help='Os release changelog')
-        releases_create_parser.add_argument('--deltasize', required=True, type=int, help='Delta size in MB')
-        releases_create_parser.add_argument('--date', type=str, help='Release date (default: now)')
-        releases_create_parser.add_argument('--dryrun', help='Remove the release after insert', action='store_true')
-        # release delete parser
-        releases_delete_parser = releases_subparsers.add_parser('delete', help='Delete a release')
-        add_common_params(releases_delete_parser)
-        releases_delete_parser.add_argument('--osid', type=str, help='Operating System\'s id associated to release')
-        releases_delete_parser.add_argument('--codeid', type=str, help='Operating System\'s code associated to release')
-        releases_delete_parser.add_argument('--releaseid', required=True, type=str, help='Release\'s id')
+        os_list_parser.add_argument('--osid', nargs="?", help='Operating System\'s numerical id')
 
         # models parser
         models_parser = subparsers.add_parser('models', help='List all available models')
@@ -335,39 +261,7 @@ def main():
                     return
             used_base_url = PRODUCTION_BASE_URI
 
-        if args.operation == 'binding':
-            psm.binding(used_base_url, args.user, user_password, company=args.company, hardware_id=args.hardwareid,
-                        gateway_serial_number=args.serialnumber, input_file=args.input,
-                        output_file=args.output, dryrun=args.dryrun)
-        elif args.operation == 'deregister':
-            psm.deregister(used_base_url, args.user, user_password, hardware_id=args.hardwareid)
-        elif args.operation == 'companies':
-            if args.action == 'list':
-                companies.get_companies(used_base_url, args.user, user_password)
-            elif args.action == 'getos':
-                companies.get_os(used_base_url, args.user, user_password, company_code=args.companycode)
-            elif args.action == 'addos':
-                companies.add_os(used_base_url, args.user, user_password, company_code=args.companycode,
-                                 os_code_id=args.oscode)
-        elif args.operation == 'os':
-            if args.action == 'list':
-                operating_systems.get_oses(used_base_url, args.user, user_password, code_id=args.codeid)
-            elif args.action == 'create':
-                operating_systems.create_os(used_base_url, args.user, user_password, name=args.name,
-                                            description=args.description, repository_url=args.url, code_id=args.codeid)
-        elif args.operation == 'releases':
-            if args.action == 'list':
-                operating_systems.get_releases(used_base_url, args.user, user_password, os_id=args.osid,
-                                               code_id=args.codeid)
-            elif args.action == 'create':
-                operating_systems.create_releases(used_base_url, args.user, user_password, os_id=args.osid,
-                                                  version=args.version, changelog=args.changelog,
-                                                  delta_size=args.deltasize, release_date=args.date,
-                                                  code_id=args.codeid, dryrun=args.dryrun)
-            elif args.action == 'delete':
-                operating_systems.delete_releases(used_base_url, args.user, user_password, os_id=args.osid,
-                                                  code_id=args.codeid, release_id=args.releaseid)
-        elif args.operation == 'models':
+        if args.operation == 'models':
             if args.action == 'list':
                 models.get_models(used_base_url, args.user, user_password)
         elif args.operation == 'gateways':
@@ -376,6 +270,9 @@ def main():
             elif args.action == 'add':
                 gateways.add_gateway(used_base_url, args.user, user_password, registration_code=args.registrationcode,
                                      serial_number=args.serialnumber)
+        elif args.operation == 'os':
+            if args.action == 'list':
+                os.get_oses(used_base_url, args.user, user_password, os_id=args.osid)
         elif args.operation == 'apps':
             if args.action == 'list':
                 applications.get_apps(used_base_url, args.user, user_password, app_id=args.appid)

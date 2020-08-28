@@ -6,5 +6,6 @@ __all__ = {
     'devices',
     'campaigns',
     'os_campaign',
-    'file_campaign'
+    'file_campaign',
+    'os'
 }
