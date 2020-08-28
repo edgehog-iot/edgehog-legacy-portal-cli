@@ -4,7 +4,7 @@ import sys
 import requests
 
 from datetime import datetime
-from ep_operations.auth import login, logout
+from ep_operations.auth import internal_login, internal_logout
 from ep_operations.common import get_authorized_headers
 
 OS_API_V1 = "{}/iapi/v1/operating-systems"
@@ -18,7 +18,7 @@ def get_oses(uri: str, user: str, password: str, code_id: str):
 
 
 def get_oses_request(uri: str, user: str, password: str, code_id: str):
-    token = login(uri, user, password)
+    token = internal_login(uri, user, password)
     params = {}
     if len(token) == 0:
         return
@@ -44,12 +44,12 @@ def get_oses_request(uri: str, user: str, password: str, code_id: str):
             "repository_url": os.get("repository_url")
         })
 
-    logout(uri, token)
+    internal_logout(uri, token)
     return oses
 
 
 def create_os(uri: str, user: str, password: str, name: str, description: str, repository_url: str, code_id: str):
-    token = login(uri, user, password)
+    token = internal_login(uri, user, password)
     if len(token) == 0:
         return
 
@@ -67,11 +67,11 @@ def create_os(uri: str, user: str, password: str, name: str, description: str, r
     result = create_oss_request.json()
 
     print(json.dumps(result, indent=4))
-    logout(uri, token)
+    internal_logout(uri, token)
 
 
 def get_releases(uri: str, user: str, password: str, os_id: str, code_id: str):
-    token = login(uri, user, password)
+    token = internal_login(uri, user, password)
     params = {}
     if len(token) == 0:
         return
@@ -101,7 +101,7 @@ def get_releases(uri: str, user: str, password: str, os_id: str, code_id: str):
 
     # pprint.pprint(releases, indent=4)
     print(json.dumps(releases, indent=4))
-    logout(uri, token)
+    internal_logout(uri, token)
 
 
 def create_releases(uri: str, user: str, password: str, os_id: str, code_id: str, version: str, changelog: str,
@@ -109,7 +109,7 @@ def create_releases(uri: str, user: str, password: str, os_id: str, code_id: str
     if not release_date:
         release_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-    token = login(uri, user, password)
+    token = internal_login(uri, user, password)
     if len(token) == 0:
         return
 
@@ -145,11 +145,11 @@ def create_releases(uri: str, user: str, password: str, os_id: str, code_id: str
             result['dryrun_success'] = delete_result.get('success', False)
 
     print(json.dumps(result, indent=4))
-    logout(uri, token)
+    internal_logout(uri, token)
 
 
 def delete_releases(uri: str, user: str, password: str, os_id: str, code_id: str, release_id: str):
-    token = login(uri, user, password)
+    token = internal_login(uri, user, password)
     if len(token) == 0:
         return
 
@@ -171,4 +171,4 @@ def delete_releases(uri: str, user: str, password: str, os_id: str, code_id: str
     result = delete_release_request.json()
 
     print(json.dumps(result, indent=4))
-    logout(uri, token)
+    internal_logout(uri, token)

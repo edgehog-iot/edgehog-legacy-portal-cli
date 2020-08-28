@@ -3,11 +3,13 @@ import random
 import requests
 from io import TextIOWrapper
 
-from ep_operations.auth import login, logout
+from ep_operations.auth import internal_login as login
+from ep_operations.auth import internal_logout as logout
 from ep_operations.common import get_authorized_headers
 
 BINDING_API_V1 = "{}/iapi/v1/psm/sn-binding"
 POST_BINDING_API_V1 = "{}/iapi/v1/psm/sn-binding/{}"
+DEREGISTER_API_V1 = "{}/iapi/v1/gateways/deregister"
 
 
 def binding(uri: str, user: str, password: str, company: str = None, hardware_id: str = None,
@@ -59,12 +61,28 @@ def binding(uri: str, user: str, password: str, company: str = None, hardware_id
     logout(uri, token)
 
 
+def deregister(uri: str, user: str, password: str, hardware_id: str):
+    token = login(uri, user, password)
+    if len(token) == 0:
+        return
+
+    uri = DEREGISTER_API_V1.format(uri)
+    headers = get_authorized_headers(token)
+    body = {"hardware_id": hardware_id}
+
+    deregister_request = requests.post(uri, headers=headers, data=body)
+    response = deregister_request.json()
+
+    logout(uri, token)
+    print(json.dumps(response, indent=4))
+
+
 def __binding_request(uri: str, token: str, company: str = None, hardware_id: str = None,
                       gateway_serial_number: str = None, dryrun: bool = False):
     binding_headers = get_authorized_headers(token)
     body = {
         "hardware_id": hardware_id,
-        "gateway_serial_number": gateway_serial_number
+        "device_serial_number": gateway_serial_number
     }
     if company:
         body["customer_code"] = company
