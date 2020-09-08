@@ -223,7 +223,7 @@ optional arguments:
   --tags [TAGS [TAGS ...]]
                         File model tags
 ```
-#### - Verions
+#### - Versions
 Utility to list file versions of a certain file model
 ```
 #: python epcli files versions --help
