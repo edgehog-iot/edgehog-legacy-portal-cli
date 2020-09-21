@@ -78,6 +78,10 @@ def main():
         devices_add_parser.add_argument('--serialnumber', help='Device serial number')
         devices_add_parser.add_argument('--name', help='Device name')
         devices_add_parser.add_argument('--notes', nargs='?', help='Device notes')
+        # device geolocation
+        get_geolocation_parser = devices_subparsers.add_parser('geolocation', help='Get last geolocations')
+        add_common_params(get_geolocation_parser)
+        get_geolocation_parser.add_argument('--deviceid', help='Device ID')
         # device provision
         devices_provision_parser = devices_subparsers.add_parser('provision', help='Provision a device')
         add_common_params(devices_provision_parser)
@@ -309,6 +313,8 @@ def main():
             elif args.action == 'add':
                 devices.add_device(used_base_url, args.user, user_password, args.gatewayid, args.modelid,
                                    args.serialnumber, args.name, args.notes)
+            elif args.action == 'geolocation':
+                devices.get_geolocation(used_base_url, args.user, user_password, args.deviceid)
             elif args.action == 'provision':
                 devices.provision(used_base_url, args.user, user_password, args.deviceid, args.gatewayserial)
             elif args.action == 'decommission':

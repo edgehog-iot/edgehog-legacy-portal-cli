@@ -158,6 +158,7 @@ optional arguments:
                         Gateway Serial Number
 ```
 ### Connect
+Utility to open a SSH connection to the gateway
 ```
 #: python epcli gateways connect --help
 usage: epcli gateways connect [-h] [--gatewayid GATEWAYID] -u USER [-p PWD]
@@ -173,6 +174,176 @@ optional arguments:
                         Set the base URI (default: staging)
   -f, --force           Detached mode, does not show any warning if production
                         environment is selected
+```
+---
+### Devices
+Interface for Devices API
+```
+#: python epcli devices --help
+usage: epcli devices [-h]
+                     {list,add,geolocation,provision,decommission,reinstallos,replacegw}
+                     ...
+
+positional arguments:
+  {list,add,geolocation,provision,decommission,reinstallos,replacegw}
+                        Operations on devices API
+    list                List all available devices
+    add                 Add new devices
+    geolocation         Get last geolocations
+    provision           Provision a device
+    decommission        End the life of a device
+    reinstallos         Notify a firmware reset of a device
+    replacegw           Notify a gateway change on the device
+
+optional arguments:
+  -h, --help            show this help message and exit
+```
+#### - List 
+Utility to list all available devices
+```
+#: python epcli devices list --help
+usage: epcli devices list [-h] -u USER [-p PWD] [-e {test,staging,production}]
+                          [-f] [--deviceid [DEVICEID]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
+  -e {test,staging,production}, --environment {test,staging,production}
+                        Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
+  --deviceid [DEVICEID]
+                        Device ID
+```
+#### - Add
+Utility to add a new device
+```
+#: python epcli devices add --help
+usage: epcli devices add [-h] -u USER [-p PWD] [-e {test,staging,production}]
+                         [-f] [--gatewayid GATEWAYID] [--modelid MODELID]
+                         [--serialnumber SERIALNUMBER] [--name NAME]
+                         [--notes [NOTES]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
+  -e {test,staging,production}, --environment {test,staging,production}
+                        Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
+  --gatewayid GATEWAYID
+                        Gateway ID
+  --modelid MODELID     Gateway ID
+  --serialnumber SERIALNUMBER
+                        Device serial number
+  --name NAME           Device name
+  --notes [NOTES]       Device notes
+``` 
+#### - Provision
+Utility to manually provision a device
+```
+#: python epcli devices provision --help
+usage: epcli devices provision [-h] -u USER [-p PWD]
+                               [-e {test,staging,production}] [-f]
+                               [--deviceid DEVICEID]
+                               [--gatewayserial GATEWAYSERIAL]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
+  -e {test,staging,production}, --environment {test,staging,production}
+                        Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
+  --deviceid DEVICEID   Device ID
+  --gatewayserial GATEWAYSERIAL
+                        Gateway Serial number
+``` 
+#### - Decommission
+Utility to decommission a device
+```
+#: python epcli devices decommission --help
+usage: epcli devices decommission [-h] -u USER [-p PWD]
+                                  [-e {test,staging,production}] [-f]
+                                  [--deviceid DEVICEID]
+                                  [--serialnumber SERIALNUMBER]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
+  -e {test,staging,production}, --environment {test,staging,production}
+                        Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
+  --deviceid DEVICEID   Device ID
+  --serialnumber SERIALNUMBER
+                        Device Serial number
+```
+#### - Reinstall OS
+Utility to notify that the OS has been reseted on the device
+```
+#: python epcli devices reinstallos --help
+usage: epcli devices reinstallos [-h] -u USER [-p PWD]
+                                 [-e {test,staging,production}] [-f]
+                                 [--deviceid DEVICEID]
+                                 [--serialnumber SERIALNUMBER]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
+  -e {test,staging,production}, --environment {test,staging,production}
+                        Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
+  --deviceid DEVICEID   Device ID
+  --serialnumber SERIALNUMBER
+                        Device Serial number
+```
+#### - Replace Gateway
+Utility to notify a gateway replace on the device
+```
+#: python epcli devices replacegw --help
+usage: epcli devices replacegw [-h] -u USER [-p PWD]
+                               [-e {test,staging,production}] [-f]
+                               [--deviceid DEVICEID] [--gatewayid GATEWAYID]
+                               [--serialnumber SERIALNUMBER]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
+  -e {test,staging,production}, --environment {test,staging,production}
+                        Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
+  --deviceid DEVICEID   Device ID
+  --gatewayid GATEWAYID
+                        New Gateway ID
+  --serialnumber SERIALNUMBER
+                        Device Serial number
+```
+#### - Geolocation
+Utility to get the last geolocation made on the device
+```
+#: python epcli devices geolocation --help
+usage: epcli devices geolocation [-h] -u USER [-p PWD]
+                                 [-e {test,staging,production}] [-f]
+                                 [--deviceid DEVICEID]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
+  -e {test,staging,production}, --environment {test,staging,production}
+                        Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
+  --deviceid DEVICEID   Device ID
 ```
 ---
 ### Files Models

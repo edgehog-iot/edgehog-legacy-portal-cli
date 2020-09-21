@@ -61,6 +61,7 @@ def ssh_connect(uri: str, user: str, password: str, gw_id: int):
     else:
         ret = ssh_dict
 
+    logout(uri, token)
     return print(json.dumps(ret, indent=4))
 
 
@@ -85,6 +86,7 @@ def add_gateway(uri: str, user: str, password: str, registration_code: str, seri
     req = requests.post(GET_GW_V1_API.format(uri), headers=headers, params=body)
     response = req.json()
 
+    logout(uri, token)
     print(json.dumps(response))
 
 

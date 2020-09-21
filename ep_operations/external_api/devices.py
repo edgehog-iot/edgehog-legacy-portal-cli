@@ -78,7 +78,30 @@ def provision(uri: str, user: str, password: str, device_id: str, gateway_serial
     req = requests.post(url=url, headers=headers, params=body)
     response = req.json()
 
+    logout(uri, token)
     print(json.dumps(response))
+
+
+def get_geolocation(uri: str, user: str, password: str, device_id: str):
+    token = login(uri, user, password)
+    if len(token) == 0:
+        return
+
+    url = (GET_GW_V1_API + "/{}/geolocations?$orderby=created_at DESC&$top=1").format(uri, device_id)
+    headers = get_authorized_headers(token)
+
+    req = requests.get(url=url, headers=headers)
+    response = req.json()
+
+    if response.get('success') and response.get('rows') and len(response.get('rows')) > 0:
+        ret = response.get('rows')[0]
+        del ret['id']
+        ret['success'] = True
+    else:
+        ret = response
+
+    logout(uri, token)
+    print(json.dumps(ret, indent=4))
 
 
 def decommission(uri: str, user: str, password: str, device_id: str, device_serial_number: str):
@@ -95,6 +118,7 @@ def decommission(uri: str, user: str, password: str, device_id: str, device_seri
     req = requests.post(url=url, headers=headers, params=body)
     response = req.json()
 
+    logout(uri, token)
     print(json.dumps(response))
 
 
@@ -112,6 +136,7 @@ def reinstall_os(uri: str, user: str, password: str, device_id: str, device_seri
     req = requests.post(url=url, headers=headers, params=body)
     response = req.json()
 
+    logout(uri, token)
     print(json.dumps(response))
 
 
@@ -130,6 +155,7 @@ def replace_gw(uri: str, user: str, password: str, device_id: str, device_serial
     req = requests.post(url=url, headers=headers, params=body)
     response = req.json()
 
+    logout(uri, token)
     print(json.dumps(response))
 
 
