@@ -107,15 +107,16 @@ optional arguments:
 Interface for Gateways API
 ```
 #: python epcli gateways --help
-usage: epcli gateways [-h] {list,add} ...
+usage: epcli gateways [-h] {list,connect,add} ...
 
 positional arguments:
-  {list,add}  Operations on gateways API
-    list      List gateways
-    add       Add a new gateway to user accounts company
+  {list,connect,add}  Operations on gateways API
+    list              List gateways
+    connect           Start SSH connection to the gateway
+    add               Add a new gateway to user accounts company
 
 optional arguments:
-  -h, --help  show this help message and exit
+  -h, --help          show this help message and exit
 ```
 #### - List
 Utility to list all the gateways linked to the user
@@ -138,7 +139,7 @@ optional arguments:
 #### - Add
 Utility to add a new gateway to user's company account
 ```
-#:python epcli gateways add --help
+#: python epcli gateways add --help
 usage: epcli gateways add [-h] -u USER [-p PWD] [-e {test,staging,production}]
                           [-f] [--serialnumber K... CODE]
                           [--registrationcode registration code]
@@ -155,6 +156,23 @@ optional arguments:
                         Gateway Serial Number
   --registrationcode registration code
                         Gateway Serial Number
+```
+### Connect
+```
+#: python epcli gateways connect --help
+usage: epcli gateways connect [-h] [--gatewayid GATEWAYID] -u USER [-p PWD]
+                              [-e {test,staging,production}] [-f]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --gatewayid GATEWAYID
+                        Gateway id
+  -u USER, --user USER  User email
+  -p PWD, --pwd PWD     User password
+  -e {test,staging,production}, --environment {test,staging,production}
+                        Set the base URI (default: staging)
+  -f, --force           Detached mode, does not show any warning if production
+                        environment is selected
 ```
 ---
 ### Files Models

@@ -50,6 +50,10 @@ def main():
         gateways_list_parser = gateways_subparsers.add_parser('list', help='List gateways')
         gateways_list_parser.add_argument('--unassociated', nargs="?", type=bool, default=False, help='Inflate the zip file')
         add_common_params(gateways_list_parser)
+        # gateway ssh connect
+        gateways_connect_parser = gateways_subparsers.add_parser('connect', help='Start SSH connection to the gateway')
+        gateways_connect_parser.add_argument('--gatewayid', type=int, help='Gateway id')
+        add_common_params(gateways_connect_parser)
         # gateway add parser
         gateways_add_parser = gateways_subparsers.add_parser('add', help='Add a new gateway to user account''s company')
         add_common_params(gateways_add_parser)
@@ -267,6 +271,8 @@ def main():
         elif args.operation == 'gateways':
             if args.action == 'list':
                 gateways.get_gateways(used_base_url, args.user, user_password, args.unassociated)
+            if args.action == 'connect':
+                gateways.ssh_connect(used_base_url, args.user, user_password, args.gatewayid)
             elif args.action == 'add':
                 gateways.add_gateway(used_base_url, args.user, user_password, registration_code=args.registrationcode,
                                      serial_number=args.serialnumber)
