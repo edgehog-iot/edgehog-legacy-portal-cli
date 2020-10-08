@@ -66,6 +66,9 @@ def ssh_connect(uri: str, user: str, password: str, gw_id: int):
         ret = {
             'success': True,
             'connection_string': connection_string,
+            'host': host,
+            'port': port,
+            'user': user,
             'timeout': timeout
         }
     else:
