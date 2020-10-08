@@ -1,4 +1,5 @@
 import json
+from typing import List
 
 import requests
 
@@ -8,9 +9,13 @@ from ep_operations.common import get_authorized_headers
 from ep_operations.external_api import gateways
 
 GET_GW_V1_API = "{}/api/v1/management/devices"
+List_string = List[str]
 
 
-def get_devices(uri: str, user: str, password: str, device_id: str = None):
+def get_devices(uri: str, user: str, password: str, device_id: str = None, hardware_id: str = None,
+                tags: List_string = None):
+    if tags is None:
+        tags = []
     token = login(uri, user, password)
     if len(token) == 0:
         return
@@ -22,7 +27,28 @@ def get_devices(uri: str, user: str, password: str, device_id: str = None):
     if device_id:
         endpoint += "/{}".format(device_id)
 
-    get_devices_api_request = requests.get(endpoint.format(uri), headers=headers)
+    params = {}
+
+    if tags or hardware_id:
+        filters = []
+        if hardware_id:
+            filters.append({
+                "field": "gateway.hardware_id",
+                "operator": "contains",
+                "value": hardware_id
+            })
+        for tag in tags:
+            filters.append({
+                "field": "tags",
+                "operator": "eq",
+                "value": tag
+            })
+        if len(filters) > 0:
+            params = {
+                '$filter': '{"filters": ' + json.dumps(filters) + ', "logic": "and"}'
+            }
+
+    get_devices_api_request = requests.get(endpoint.format(uri), headers=headers, params=params)
     devices_dict = get_devices_api_request.json()
 
     if device_id:
@@ -140,7 +166,7 @@ def reinstall_os(uri: str, user: str, password: str, device_id: str, device_seri
     print(json.dumps(response))
 
 
-def replace_gw(uri: str, user: str, password: str, device_id: str, device_serial_number: str, new_gw_id:str):
+def replace_gw(uri: str, user: str, password: str, device_id: str, device_serial_number: str, new_gw_id: str):
     token = login(uri, user, password)
     if len(token) == 0:
         return
@@ -162,10 +188,10 @@ def replace_gw(uri: str, user: str, password: str, device_id: str, device_serial
 def __clean_device(device: dict):
     dev = {
         "id": device.get("id"),
-        "name": device.get("id"),
-        "serial_number": device.get("id"),
-        "status": device.get("id"),
-        "notes": device.get("id"),
+        "name": device.get("name"),
+        "serial_number": device.get("serial_number"),
+        "status": device.get("status"),
+        "notes": device.get("notes"),
         "features": [],
         "tags": []
     }

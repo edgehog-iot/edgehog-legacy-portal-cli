@@ -48,7 +48,9 @@ def main():
         gateways_subparsers.required = True
         # gateway list parser
         gateways_list_parser = gateways_subparsers.add_parser('list', help='List gateways')
-        gateways_list_parser.add_argument('--unassociated', nargs="?", type=bool, default=False, help='Inflate the zip file')
+        gateways_list_parser.add_argument('--unassociated', nargs="?", type=bool, default=False,
+                                          help='True if not connected to a device')
+        gateways_list_parser.add_argument('--hardwareid', nargs="?", help='Hardware id')
         add_common_params(gateways_list_parser)
         # gateway ssh connect
         gateways_connect_parser = gateways_subparsers.add_parser('connect', help='Start SSH connection to the gateway')
@@ -70,6 +72,8 @@ def main():
         devices_list_parser = devices_subparsers.add_parser('list', help='List all available devices')
         add_common_params(devices_list_parser)
         devices_list_parser.add_argument('--deviceid', nargs='?', help='Device ID')
+        devices_list_parser.add_argument('--hardwareid', nargs="?", help='Gateway Hardware id')
+        devices_list_parser.add_argument('--tags', nargs='*', help='Target devices tags')
         # devices add
         devices_add_parser = devices_subparsers.add_parser('add', help='Add new devices')
         add_common_params(devices_add_parser)
@@ -202,7 +206,8 @@ def main():
         add_common_params(appcampaign_add_parser)
         appcampaign_add_parser.add_argument('--name', help='App campaign name')
         appcampaign_add_parser.add_argument('--appid', type=int, help='App to update id')
-        appcampaign_add_parser.add_argument('--campaignop', choices=['install', 'update', 'install_update', 'start', 'stop'],
+        appcampaign_add_parser.add_argument('--campaignop',
+                                            choices=['install', 'update', 'install_update', 'start', 'stop'],
                                             help='Action executed by the campaign')
         appcampaign_add_parser.add_argument('--timeout', nargs='?', default=30, help='Timeout in minutes')
         appcampaign_add_parser.add_argument('--rollout', nargs='?', default=5, help='Rollout Rate')
@@ -274,7 +279,7 @@ def main():
                 models.get_models(used_base_url, args.user, user_password)
         elif args.operation == 'gateways':
             if args.action == 'list':
-                gateways.get_gateways(used_base_url, args.user, user_password, args.unassociated)
+                gateways.get_gateways(used_base_url, args.user, user_password, args.unassociated, args.hardwareid)
             if args.action == 'connect':
                 gateways.ssh_connect(used_base_url, args.user, user_password, args.gatewayid)
             elif args.action == 'add':
@@ -309,7 +314,8 @@ def main():
                                   file_description=args.filedescription, inflate=args.inflate)
         elif args.operation == 'devices':
             if args.action == 'list':
-                devices.get_devices(used_base_url, args.user, user_password, args.deviceid)
+                devices.get_devices(used_base_url, args.user, user_password, device_id=args.deviceid, tags=args.tags,
+                                    hardware_id=args.hardwareid)
             elif args.action == 'add':
                 devices.add_device(used_base_url, args.user, user_password, args.gatewayid, args.modelid,
                                    args.serialnumber, args.name, args.notes)

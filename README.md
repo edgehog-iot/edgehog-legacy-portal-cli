@@ -122,13 +122,16 @@ optional arguments:
 Utility to list all the gateways linked to the user
 ```
 #: python epcli gateways list --help
-usage: epcli gateways list [-h] [--unassociated [UNASSOCIATED]] -u USER
-                           [-p PWD] [-e {test,staging,production}] [-f]
+usage: epcli gateways list [-h] [--unassociated [UNASSOCIATED]]
+                           [--hardwareid [HARDWAREID]] -u USER [-p PWD]
+                           [-e {test,staging,production}] [-f]
 
 optional arguments:
   -h, --help            show this help message and exit
   --unassociated [UNASSOCIATED]
-                        Inflate the zip file
+                        True if not connected to a device
+  --hardwareid [HARDWAREID]
+                        Hardware id
   -u USER, --user USER  User email
   -p PWD, --pwd PWD     User password
   -e {test,staging,production}, --environment {test,staging,production}
@@ -204,6 +207,8 @@ Utility to list all available devices
 #: python epcli devices list --help
 usage: epcli devices list [-h] -u USER [-p PWD] [-e {test,staging,production}]
                           [-f] [--deviceid [DEVICEID]]
+                          [--hardwareid [HARDWAREID]]
+                          [--tags [TAGS [TAGS ...]]]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -215,6 +220,10 @@ optional arguments:
                         environment is selected
   --deviceid [DEVICEID]
                         Device ID
+  --hardwareid [HARDWAREID]
+                        Gateway Hardware id
+  --tags [TAGS [TAGS ...]]
+                        Target devices tags
 ```
 #### - Add
 Utility to add a new device

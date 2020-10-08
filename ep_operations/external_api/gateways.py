@@ -1,4 +1,5 @@
 import json
+from typing import List
 
 import requests
 
@@ -7,9 +8,10 @@ from ep_operations.auth import external_logout as logout
 from ep_operations.common import get_authorized_headers
 
 GET_GW_V1_API = "{}/api/v1/production/gateways"
+List_string = List[str]
 
 
-def get_gateways(uri: str, user: str, password: str, unassociated: bool):
+def get_gateways(uri: str, user: str, password: str, unassociated: bool, hardware_id: str = None):
     token = login(uri, user, password)
     if len(token) == 0:
         return
@@ -21,7 +23,15 @@ def get_gateways(uri: str, user: str, password: str, unassociated: bool):
     if unassociated:
         endpoint += "/unassociated"
 
-    get_gateways_api_request = requests.get(endpoint.format(uri), headers=headers)
+    params={}
+
+    if hardware_id:
+        params = {
+            '$filter': '{"filters":[{"field":"hardware_id","operator":"contains","value":"' + hardware_id +
+                       '"}],"logic":"and"} '
+        }
+
+    get_gateways_api_request = requests.get(endpoint.format(uri), headers=headers, params=params)
     gateways_dict = get_gateways_api_request.json()
 
     gateways = []
@@ -44,12 +54,12 @@ def ssh_connect(uri: str, user: str, password: str, gw_id: int):
     ssh_connect_api_request = requests.post(endpoint.format(uri), headers=headers)
     ssh_dict = ssh_connect_api_request.json()
 
-    if ssh_dict.get('success') and ssh_dict.get('body') and ssh_dict.get('body').get('port'):
-        body = ssh_dict.get('body')
-        host = body.get("host")
-        port = body.get("port")
-        timeout = body.get("timeout")
-        user = body.get("user")
+    if ssh_dict.get('success') and ssh_dict.get('data') and ssh_dict.get('data').get('port'):
+        data = ssh_dict.get('data')
+        host = data.get("host")
+        port = data.get("port")
+        timeout = data.get("timeout")
+        user = data.get("user")
 
         connection_string = 'ssh -f -L {}:127.0.0.1:{} {}@{} /bin/sleep 600 && ssh root@127.0.0.1 -o ' \
                             'IdentitiesOnly=yes -p {}'.format(port, port, user, host, port)
