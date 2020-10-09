@@ -49,7 +49,11 @@ def add_campaign(uri: str, user: str, password: str, api_url: str, body: dict):
     endpoint = api_url.format(uri)
 
     add_oscamp_api_request = requests.post(endpoint.format(uri), headers=headers, json=body)
-    response = add_oscamp_api_request.json()
+    res = add_oscamp_api_request.json()
+    response = res
+    if res.data:
+        response = res.get("data")
+        response["success"] = res.get("success")
 
     logout(uri, token)
     print(json.dumps(response, indent=4))
