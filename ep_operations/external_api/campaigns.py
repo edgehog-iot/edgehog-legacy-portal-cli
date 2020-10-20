@@ -51,7 +51,7 @@ def add_campaign(uri: str, user: str, password: str, api_url: str, body: dict):
     add_oscamp_api_request = requests.post(endpoint.format(uri), headers=headers, json=body)
     res = add_oscamp_api_request.json()
     response = res
-    if res.data:
+    if res.get("data"):
         response = res.get("data")
         response["success"] = res.get("success")
 

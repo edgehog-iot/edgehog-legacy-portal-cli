@@ -53,6 +53,8 @@ def __clean_campaign(campaign: dict):
             "status": gateway.get("status"),
             "thing_name": gateway.get("thing_name"),
             "device_sn": gateway.get("device_sn"),
+            "device_id": gateway.get("device_id"),
+            "gateway_id": gateway.get("gateway_id"),
             "gateway_sn": gateway.get("gateway_sn"),
             "version": gateway.get("version"),
             "error": gateway.get("error"),
