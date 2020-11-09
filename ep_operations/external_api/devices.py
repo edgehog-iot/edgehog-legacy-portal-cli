@@ -212,7 +212,7 @@ def __clean_device(device: dict):
     for feature in features:
         dev["features"].append(feature)
 
-    tags = device.get("features")
+    tags = device.get("tags")
     for tag in tags:
         dev["tags"].append(tag)
 
