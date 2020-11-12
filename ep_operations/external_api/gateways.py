@@ -127,7 +127,9 @@ def __clean_gateway(gateway: dict):
     os = gateway.get("os")
     if os:
         new_gw["os"] = {
-            "provisioning_status": os.get("provisioning_status")
+            "provisioning_status": os.get("provisioning_status"),
+            "name": os.get("name"),
+            "version": os.get("version")
         }
 
     device = gateway.get("device")
